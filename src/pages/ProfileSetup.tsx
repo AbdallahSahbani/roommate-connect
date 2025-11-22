@@ -31,7 +31,12 @@ const ProfileSetup = () => {
     pets: "no_pets",
     social_preference: "moderately_social",
     work_from_home: false,
+    preferred_cities: [] as string[],
+    preferred_state: "",
   });
+
+  const [role, setRole] = useState<"renter" | "landlord" | "both">("renter");
+  const [cityInput, setCityInput] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -50,12 +55,37 @@ const ProfileSetup = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase
+      // Update profile
+      const { error: profileError } = await supabase
         .from("profiles")
         .update(formData)
         .eq("id", userId);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+
+      // Handle user roles
+      // First, remove existing roles
+      await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId);
+
+      // Add new roles based on selection
+      const rolesToInsert = [];
+      if (role === "both") {
+        rolesToInsert.push(
+          { user_id: userId, role: "renter" },
+          { user_id: userId, role: "landlord" }
+        );
+      } else {
+        rolesToInsert.push({ user_id: userId, role });
+      }
+
+      const { error: rolesError } = await supabase
+        .from("user_roles")
+        .insert(rolesToInsert);
+
+      if (rolesError) throw rolesError;
 
       toast({
         title: "Profile updated!",
@@ -73,6 +103,23 @@ const ProfileSetup = () => {
     }
   };
 
+  const addCity = () => {
+    if (cityInput.trim() && !formData.preferred_cities.includes(cityInput.trim())) {
+      setFormData({
+        ...formData,
+        preferred_cities: [...formData.preferred_cities, cityInput.trim()]
+      });
+      setCityInput("");
+    }
+  };
+
+  const removeCity = (city: string) => {
+    setFormData({
+      ...formData,
+      preferred_cities: formData.preferred_cities.filter(c => c !== city)
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-3xl mx-auto">
@@ -85,6 +132,21 @@ const ProfileSetup = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Role Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">How are you using Roomates?</h3>
+                <Select value={role} onValueChange={(value: any) => setRole(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="renter">Renter - Looking for a place</SelectItem>
+                    <SelectItem value="landlord">Landlord - I have properties to list</SelectItem>
+                    <SelectItem value="both">Both - I'm a renter and landlord</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* About You */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">About You</h3>
@@ -111,41 +173,98 @@ const ProfileSetup = () => {
                 </div>
               </div>
 
-              {/* Budget & Timeline */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Budget & Timeline</h3>
-                
-                <div className="grid grid-cols-2 gap-4">
+              {/* Preferred Location - Only for renters */}
+              {(role === "renter" || role === "both") && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Preferred Location</h3>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="budget_min">Min Budget ($/month)</Label>
-                    <Input
-                      id="budget_min"
-                      type="number"
-                      value={formData.budget_min}
-                      onChange={(e) => setFormData({ ...formData, budget_min: parseInt(e.target.value) })}
-                    />
+                    <Label htmlFor="preferred_state">State</Label>
+                    <Select 
+                      value={formData.preferred_state} 
+                      onValueChange={(value) => setFormData({ ...formData, preferred_state: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CT">Connecticut</SelectItem>
+                        <SelectItem value="NY">New York</SelectItem>
+                        <SelectItem value="MA">Massachusetts</SelectItem>
+                        <SelectItem value="RI">Rhode Island</SelectItem>
+                        <SelectItem value="NJ">New Jersey</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="budget_max">Max Budget ($/month)</Label>
-                    <Input
-                      id="budget_max"
-                      type="number"
-                      value={formData.budget_max}
-                      onChange={(e) => setFormData({ ...formData, budget_max: parseInt(e.target.value) })}
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="move_in_date">Preferred Move-in Date</Label>
-                  <Input
-                    id="move_in_date"
-                    type="date"
-                    value={formData.move_in_date}
-                    onChange={(e) => setFormData({ ...formData, move_in_date: e.target.value })}
-                  />
+                  <div className="space-y-2">
+                    <Label>Preferred Cities</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add a city"
+                        value={cityInput}
+                        onChange={(e) => setCityInput(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addCity())}
+                      />
+                      <Button type="button" onClick={addCity} variant="outline">Add</Button>
+                    </div>
+                    {formData.preferred_cities.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {formData.preferred_cities.map((city) => (
+                          <div key={city} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                            {city}
+                            <button
+                              type="button"
+                              onClick={() => removeCity(city)}
+                              className="ml-1 hover:text-destructive"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Budget & Timeline - Only for renters */}
+              {(role === "renter" || role === "both") && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Budget & Timeline</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="budget_min">Min Budget ($/month)</Label>
+                      <Input
+                        id="budget_min"
+                        type="number"
+                        value={formData.budget_min}
+                        onChange={(e) => setFormData({ ...formData, budget_min: parseInt(e.target.value) })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="budget_max">Max Budget ($/month)</Label>
+                      <Input
+                        id="budget_max"
+                        type="number"
+                        value={formData.budget_max}
+                        onChange={(e) => setFormData({ ...formData, budget_max: parseInt(e.target.value) })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="move_in_date">Preferred Move-in Date</Label>
+                    <Input
+                      id="move_in_date"
+                      type="date"
+                      value={formData.move_in_date}
+                      onChange={(e) => setFormData({ ...formData, move_in_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Lifestyle Preferences */}
               <div className="space-y-4">
