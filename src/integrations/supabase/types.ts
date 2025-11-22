@@ -962,7 +962,90 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          background_check_status: string | null
+          bio: string | null
+          budget_max: number | null
+          budget_min: number | null
+          cleanliness_level: number | null
+          created_at: string | null
+          full_name: string | null
+          guest_frequency: string | null
+          id: string | null
+          id_verified: boolean | null
+          income_verified: boolean | null
+          is_public_profile: boolean | null
+          lease_duration_months: number | null
+          move_in_date: string | null
+          noise_tolerance: number | null
+          occupation: string | null
+          pets: string | null
+          preferred_cities: string[] | null
+          profile_photo_url: string | null
+          sleep_schedule: string | null
+          smoking: string | null
+          social_preference: string | null
+          work_from_home: boolean | null
+        }
+        Insert: {
+          age?: never
+          avatar_url?: string | null
+          background_check_status?: string | null
+          bio?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          cleanliness_level?: number | null
+          created_at?: string | null
+          full_name?: string | null
+          guest_frequency?: string | null
+          id?: string | null
+          id_verified?: boolean | null
+          income_verified?: boolean | null
+          is_public_profile?: boolean | null
+          lease_duration_months?: number | null
+          move_in_date?: string | null
+          noise_tolerance?: number | null
+          occupation?: string | null
+          pets?: string | null
+          preferred_cities?: string[] | null
+          profile_photo_url?: string | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          social_preference?: string | null
+          work_from_home?: boolean | null
+        }
+        Update: {
+          age?: never
+          avatar_url?: string | null
+          background_check_status?: string | null
+          bio?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          cleanliness_level?: number | null
+          created_at?: string | null
+          full_name?: string | null
+          guest_frequency?: string | null
+          id?: string | null
+          id_verified?: boolean | null
+          income_verified?: boolean | null
+          is_public_profile?: boolean | null
+          lease_duration_months?: number | null
+          move_in_date?: string | null
+          noise_tolerance?: number | null
+          occupation?: string | null
+          pets?: string | null
+          preferred_cities?: string[] | null
+          profile_photo_url?: string | null
+          sleep_schedule?: string | null
+          smoking?: string | null
+          social_preference?: string | null
+          work_from_home?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
