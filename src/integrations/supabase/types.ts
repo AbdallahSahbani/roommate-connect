@@ -484,6 +484,7 @@ export type Database = {
           phone: string | null
           phone_verified: boolean | null
           preferred_cities: string[] | null
+          preferred_state: string | null
           profile_photo_url: string | null
           self_reported_monthly_income: number | null
           sleep_schedule: string | null
@@ -525,6 +526,7 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           preferred_cities?: string[] | null
+          preferred_state?: string | null
           profile_photo_url?: string | null
           self_reported_monthly_income?: number | null
           sleep_schedule?: string | null
@@ -566,6 +568,7 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           preferred_cities?: string[] | null
+          preferred_state?: string | null
           profile_photo_url?: string | null
           self_reported_monthly_income?: number | null
           sleep_schedule?: string | null
@@ -587,6 +590,7 @@ export type Database = {
           amenities: string[] | null
           available_from: string | null
           available_rooms: number
+          bedrooms: number | null
           city: string
           country: string | null
           created_at: string | null
@@ -636,6 +640,7 @@ export type Database = {
           amenities?: string[] | null
           available_from?: string | null
           available_rooms: number
+          bedrooms?: number | null
           city: string
           country?: string | null
           created_at?: string | null
@@ -685,6 +690,7 @@ export type Database = {
           amenities?: string[] | null
           available_from?: string | null
           available_rooms?: number
+          bedrooms?: number | null
           city?: string
           country?: string | null
           created_at?: string | null

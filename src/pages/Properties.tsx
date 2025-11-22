@@ -45,9 +45,39 @@ const Properties = () => {
   const [bedrooms, setBedrooms] = useState(searchParams.get("bedrooms") || "");
 
   useEffect(() => {
-    loadProperties();
+    loadUserPreferences();
     loadSavedListings();
   }, []);
+
+  useEffect(() => {
+    loadProperties();
+  }, [city, state, minRent, maxRent, bedrooms]);
+
+  const loadUserPreferences = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      loadProperties();
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("preferred_cities, preferred_state")
+      .eq("id", session.user.id)
+      .single();
+
+    if (profile) {
+      // Set default filters from profile if search params are empty
+      if (!searchParams.get("city") && profile.preferred_cities && Array.isArray(profile.preferred_cities) && profile.preferred_cities.length > 0) {
+        setCity(profile.preferred_cities[0]);
+      }
+      if (!searchParams.get("state") && profile.preferred_state) {
+        setState(profile.preferred_state);
+      }
+    }
+    
+    loadProperties();
+  };
 
   const loadSavedListings = async () => {
     const { data: { session } } = await supabase.auth.getSession();
