@@ -75,7 +75,7 @@ const Properties = () => {
       if (city) {
         query = query.ilike("city", `%${city}%`);
       }
-      if (state) {
+      if (state && state !== "any") {
         query = query.eq("state", state);
       }
       if (minRent) {
@@ -84,7 +84,7 @@ const Properties = () => {
       if (maxRent) {
         query = query.lte("rent_amount", parseInt(maxRent));
       }
-      if (bedrooms) {
+      if (bedrooms && bedrooms !== "any") {
         query = query.gte("total_bedrooms", parseInt(bedrooms));
       }
 
@@ -212,7 +212,7 @@ const Properties = () => {
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="any">Any</SelectItem>
                     <SelectItem value="CT">Connecticut</SelectItem>
                     <SelectItem value="NY">New York</SelectItem>
                     <SelectItem value="MA">Massachusetts</SelectItem>
@@ -252,7 +252,7 @@ const Properties = () => {
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="any">Any</SelectItem>
                     <SelectItem value="1">1+</SelectItem>
                     <SelectItem value="2">2+</SelectItem>
                     <SelectItem value="3">3+</SelectItem>
