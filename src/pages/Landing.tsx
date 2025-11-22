@@ -18,7 +18,7 @@ const Landing = () => {
     if (searchCity) params.append("city", searchCity);
     if (searchState) params.append("state", searchState);
     if (maxRent) params.append("maxRent", maxRent);
-    if (bedrooms) params.append("bedrooms", bedrooms);
+    if (bedrooms && bedrooms !== "any") params.append("bedrooms", bedrooms);
     
     navigate(`/properties?${params.toString()}`);
   };
@@ -109,7 +109,7 @@ const Landing = () => {
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Any</SelectItem>
+                        <SelectItem value="any">Any</SelectItem>
                         <SelectItem value="1">1+</SelectItem>
                         <SelectItem value="2">2+</SelectItem>
                         <SelectItem value="3">3+</SelectItem>
