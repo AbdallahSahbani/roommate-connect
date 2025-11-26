@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 const ProfileSetup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,7 @@ const ProfileSetup = () => {
     work_from_home: false,
     preferred_cities: [] as string[],
     preferred_state: "",
+    is_public_profile: false,
   });
 
   const [role, setRole] = useState<"renter" | "landlord" | "both">("renter");
@@ -351,6 +353,23 @@ const ProfileSetup = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+              </div>
+
+              {/* Profile Visibility */}
+              <div className="space-y-4 border-t pt-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="is_public_profile">Make Profile Public</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Allow other users to discover your profile for roommate matching
+                    </p>
+                  </div>
+                  <Switch
+                    id="is_public_profile"
+                    checked={formData.is_public_profile}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_public_profile: checked })}
+                  />
                 </div>
               </div>
 

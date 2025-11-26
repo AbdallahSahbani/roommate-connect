@@ -54,11 +54,12 @@ const Browse = () => {
       if (userError) throw userError;
       setCurrentUser(userProfile);
 
-      // Load other active profiles
+      // Load other public profiles only (users who opted in to be visible)
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("is_active", true)
+        .eq("is_public_profile", true)
         .neq("id", session.user.id)
         .not("bio", "is", null)
         .limit(20);
