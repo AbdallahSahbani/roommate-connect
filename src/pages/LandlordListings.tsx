@@ -10,14 +10,15 @@ import { Plus, Edit, Eye, Pause, Play, Archive } from "lucide-react";
 
 interface Property {
   id: string;
+  public_code: string | null;
   title: string;
   city: string;
-  rent_amount: number;
-  total_bedrooms: number;
-  status: string;
-  is_active: boolean;
-  views_count: number;
-  created_at: string;
+  rent_total: number | null;
+  bedrooms: number | null;
+  status: string | null;
+  is_active: boolean | null;
+  views_count: number | null;
+  created_at: string | null;
 }
 
 const LandlordListings = () => {
@@ -39,13 +40,13 @@ const LandlordListings = () => {
       return;
     }
 
-    const { data: roles } = await supabase
-      .from("user_roles")
+    const { data: profile } = await supabase
+      .from("profiles")
       .select("role")
-      .eq("user_id", session.user.id)
-      .eq("role", "landlord");
+      .eq("id", session.user.id)
+      .single();
 
-    if (!roles || roles.length === 0) {
+    if (!profile || (profile.role !== 'landlord' && profile.role !== 'both')) {
       toast({
         title: "Access denied",
         description: "You need landlord access to view this page",
@@ -187,7 +188,8 @@ const LandlordListings = () => {
                     <div className="flex-1">
                       <CardTitle className="text-xl">{property.title}</CardTitle>
                       <p className="text-muted-foreground mt-1">
-                        {property.city} • ${property.rent_amount}/mo • {property.total_bedrooms} bed
+                        {property.public_code && <span className="font-mono text-xs">#{property.public_code} • </span>}
+                        {property.city} • ${property.rent_total}/mo • {property.bedrooms} bed
                       </p>
                     </div>
                     <div className="flex gap-2">

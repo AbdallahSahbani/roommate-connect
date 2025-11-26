@@ -18,13 +18,13 @@ export const Navigation = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
-    const { data: roles } = await supabase
-      .from("user_roles")
+    const { data: profile } = await supabase
+      .from("profiles")
       .select("role")
-      .eq("user_id", session.user.id)
-      .eq("role", "landlord");
+      .eq("id", session.user.id)
+      .single();
 
-    setIsLandlord(roles && roles.length > 0);
+    setIsLandlord(profile?.role === 'landlord' || profile?.role === 'both');
   };
 
   const handleLogout = async () => {
