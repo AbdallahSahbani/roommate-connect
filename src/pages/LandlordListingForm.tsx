@@ -10,32 +10,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { generatePublicCode } from "@/lib/generatePublicCode";
+import { propertySchema } from "@/lib/validation";
 
 interface PropertyForm {
   title: string;
   description: string;
-  address: string;
+  street_address: string;
   city: string;
   state: string;
-  zip_code: string;
-  neighborhood: string;
-  rent_amount: number;
-  security_deposit: number;
-  total_bedrooms: number;
-  available_rooms: number;
-  total_bathrooms: number;
+  postal_code: string;
+  rent_total: number;
+  bedrooms: number;
+  bathrooms: number;
   square_feet: number;
+  min_household_income: number;
+  max_occupants: number;
+  available_from: string;
   property_type: string;
   furnished: boolean;
   pets_allowed: boolean;
   smoking_allowed: boolean;
-  parking: string;
   utilities_included: boolean;
-  lease_term_months_min: number;
-  lease_term_months_max: number;
-  min_household_income_monthly: number;
-  max_occupants: number;
-  available_from: string;
+  parking: string;
   photos: string[];
 }
 
@@ -49,28 +46,23 @@ const LandlordListingForm = () => {
   const [form, setForm] = useState<PropertyForm>({
     title: "",
     description: "",
-    address: "",
+    street_address: "",
     city: "",
     state: "",
-    zip_code: "",
-    neighborhood: "",
-    rent_amount: 0,
-    security_deposit: 0,
-    total_bedrooms: 1,
-    available_rooms: 1,
-    total_bathrooms: 1,
+    postal_code: "",
+    rent_total: 0,
+    bedrooms: 1,
+    bathrooms: 1,
     square_feet: 0,
+    min_household_income: 0,
+    max_occupants: 2,
+    available_from: "",
     property_type: "apartment",
     furnished: false,
     pets_allowed: false,
     smoking_allowed: false,
-    parking: "none",
     utilities_included: false,
-    lease_term_months_min: 12,
-    lease_term_months_max: 12,
-    min_household_income_monthly: 0,
-    max_occupants: 2,
-    available_from: "",
+    parking: "none",
     photos: [],
   });
 
@@ -91,7 +83,25 @@ const LandlordListingForm = () => {
       if (error) throw error;
       if (data) {
         setForm({
-          ...data,
+          title: data.title || "",
+          description: data.description || "",
+          street_address: data.street_address || "",
+          city: data.city || "",
+          state: data.state || "",
+          postal_code: data.postal_code || "",
+          rent_total: data.rent_total || 0,
+          bedrooms: data.bedrooms || 1,
+          bathrooms: data.total_bathrooms || 1,
+          square_feet: data.square_feet || 0,
+          min_household_income: data.min_household_income || 0,
+          max_occupants: data.max_occupants || 2,
+          available_from: data.available_from || "",
+          property_type: data.property_type || "apartment",
+          furnished: data.furnished || false,
+          pets_allowed: data.pets_allowed || false,
+          smoking_allowed: data.smoking_allowed || false,
+          utilities_included: data.utilities_included || false,
+          parking: data.parking || "none",
           photos: data.photos || [],
         });
       }
@@ -109,11 +119,66 @@ const LandlordListingForm = () => {
     setLoading(true);
 
     try {
+      // Validate form
+      const validation = propertySchema.safeParse({
+        title: form.title,
+        city: form.city,
+        rent_amount: form.rent_total,
+        rent_total: form.rent_total,
+        bedrooms: form.bedrooms,
+        bathrooms: form.bathrooms,
+        square_feet: form.square_feet,
+        street_address: form.street_address,
+        state: form.state,
+        postal_code: form.postal_code,
+        description: form.description,
+        min_household_income: form.min_household_income,
+        max_occupants: form.max_occupants,
+        photos: form.photos,
+      });
+      if (!validation.success) {
+        toast({
+          title: "Validation error",
+          description: validation.error.errors[0].message,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
 
-      const propertyData = {
-        ...form,
+      // Calculate default min_household_income if not set (3x rent)
+      const minIncome = form.min_household_income || form.rent_total * 3;
+
+      const propertyData: any = {
+        title: form.title,
+        description: form.description,
+        street_address: form.street_address,
+        address: `${form.street_address}, ${form.city}, ${form.state} ${form.postal_code}`,
+        city: form.city,
+        state: form.state,
+        postal_code: form.postal_code,
+        rent_total: form.rent_total,
+        rent_amount: form.rent_total,
+        bedrooms: form.bedrooms,
+        total_bedrooms: form.bedrooms,
+        bathrooms: form.bathrooms,
+        total_bathrooms: form.bathrooms,
+        square_feet: form.square_feet,
+        min_household_income: minIncome,
+        min_household_income_monthly: minIncome,
+        max_occupants: form.max_occupants || form.bedrooms + 1,
+        available_rooms: form.bedrooms,
+        available_from: form.available_from || null,
+        property_type: form.property_type,
+        furnished: form.furnished,
+        pets_allowed: form.pets_allowed,
+        smoking_allowed: form.smoking_allowed,
+        utilities_included: form.utilities_included,
+        parking: form.parking,
+        photos: form.photos,
         landlord_id: session.user.id,
         is_active: true,
         status: "active",
@@ -132,6 +197,10 @@ const LandlordListingForm = () => {
           description: "Your listing has been updated successfully",
         });
       } else {
+        // Generate public_code for new property
+        const publicCode = await generatePublicCode(form.state);
+        propertyData.public_code = publicCode;
+
         const { error } = await supabase
           .from("properties")
           .insert([propertyData]);
@@ -140,7 +209,7 @@ const LandlordListingForm = () => {
 
         toast({
           title: "Property created",
-          description: "Your listing has been created successfully",
+          description: `Your listing has been created successfully (${publicCode})`,
         });
       }
 
@@ -191,6 +260,7 @@ const LandlordListingForm = () => {
                   id="title"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  maxLength={200}
                   required
                 />
               </div>
@@ -199,8 +269,9 @@ const LandlordListingForm = () => {
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={form.description || ""}
+                  value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  maxLength={2000}
                   rows={4}
                 />
               </div>
@@ -213,11 +284,12 @@ const LandlordListingForm = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="address">Address *</Label>
+                <Label htmlFor="street_address">Street Address *</Label>
                 <Input
-                  id="address"
-                  value={form.address}
-                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  id="street_address"
+                  value={form.street_address}
+                  onChange={(e) => setForm({ ...form, street_address: e.target.value })}
+                  maxLength={200}
                   required
                 />
               </div>
@@ -229,36 +301,31 @@ const LandlordListingForm = () => {
                     id="city"
                     value={form.city}
                     onChange={(e) => setForm({ ...form, city: e.target.value })}
+                    maxLength={100}
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="state">State</Label>
+                  <Label htmlFor="state">State (2 letters) *</Label>
                   <Input
                     id="state"
-                    value={form.state || ""}
-                    onChange={(e) => setForm({ ...form, state: e.target.value })}
+                    value={form.state}
+                    onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase() })}
+                    maxLength={2}
+                    placeholder="NY"
+                    required
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="zip_code">Zip Code</Label>
-                  <Input
-                    id="zip_code"
-                    value={form.zip_code || ""}
-                    onChange={(e) => setForm({ ...form, zip_code: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="neighborhood">Neighborhood</Label>
-                  <Input
-                    id="neighborhood"
-                    value={form.neighborhood || ""}
-                    onChange={(e) => setForm({ ...form, neighborhood: e.target.value })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="postal_code">Postal Code</Label>
+                <Input
+                  id="postal_code"
+                  value={form.postal_code}
+                  onChange={(e) => setForm({ ...form, postal_code: e.target.value })}
+                  maxLength={10}
+                />
               </div>
             </CardContent>
           </Card>
@@ -268,72 +335,59 @@ const LandlordListingForm = () => {
               <CardTitle>Property Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="rent_amount">Monthly Rent ($) *</Label>
-                  <Input
-                    id="rent_amount"
-                    type="number"
-                    value={form.rent_amount}
-                    onChange={(e) => setForm({ ...form, rent_amount: Number(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="security_deposit">Security Deposit ($)</Label>
-                  <Input
-                    id="security_deposit"
-                    type="number"
-                    value={form.security_deposit || 0}
-                    onChange={(e) => setForm({ ...form, security_deposit: Number(e.target.value) })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="rent_total">Total Monthly Rent ($) *</Label>
+                <Input
+                  id="rent_total"
+                  type="number"
+                  min="0"
+                  max="999999"
+                  value={form.rent_total}
+                  onChange={(e) => setForm({ ...form, rent_total: Number(e.target.value) })}
+                  required
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="total_bedrooms">Bedrooms *</Label>
+                  <Label htmlFor="bedrooms">Bedrooms *</Label>
                   <Input
-                    id="total_bedrooms"
+                    id="bedrooms"
                     type="number"
-                    value={form.total_bedrooms}
-                    onChange={(e) => setForm({ ...form, total_bedrooms: Number(e.target.value) })}
+                    min="0"
+                    max="20"
+                    value={form.bedrooms}
+                    onChange={(e) => setForm({ ...form, bedrooms: Number(e.target.value) })}
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="available_rooms">Available Rooms *</Label>
+                  <Label htmlFor="bathrooms">Bathrooms *</Label>
                   <Input
-                    id="available_rooms"
+                    id="bathrooms"
                     type="number"
-                    value={form.available_rooms}
-                    onChange={(e) => setForm({ ...form, available_rooms: Number(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="total_bathrooms">Bathrooms *</Label>
-                  <Input
-                    id="total_bathrooms"
-                    type="number"
+                    min="0"
+                    max="20"
                     step="0.5"
-                    value={form.total_bathrooms}
-                    onChange={(e) => setForm({ ...form, total_bathrooms: Number(e.target.value) })}
+                    value={form.bathrooms}
+                    onChange={(e) => setForm({ ...form, bathrooms: Number(e.target.value) })}
                     required
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="square_feet">Square Feet</Label>
                   <Input
                     id="square_feet"
                     type="number"
-                    value={form.square_feet || 0}
+                    min="0"
+                    max="99999"
+                    value={form.square_feet}
                     onChange={(e) => setForm({ ...form, square_feet: Number(e.target.value) })}
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="property_type">Property Type</Label>
                   <Select
@@ -352,9 +406,6 @@ const LandlordListingForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="parking">Parking</Label>
                   <Select
@@ -371,15 +422,6 @@ const LandlordListingForm = () => {
                       <SelectItem value="off-street">Off-street</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div>
-                  <Label htmlFor="max_occupants">Max Occupants</Label>
-                  <Input
-                    id="max_occupants"
-                    type="number"
-                    value={form.max_occupants || 2}
-                    onChange={(e) => setForm({ ...form, max_occupants: Number(e.target.value) })}
-                  />
                 </div>
               </div>
 
@@ -422,38 +464,32 @@ const LandlordListingForm = () => {
 
           <Card className="shadow-card">
             <CardHeader>
-              <CardTitle>Lease Terms & Requirements</CardTitle>
+              <CardTitle>Requirements</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="lease_term_months_min">Min Lease (months)</Label>
-                  <Input
-                    id="lease_term_months_min"
-                    type="number"
-                    value={form.lease_term_months_min || 12}
-                    onChange={(e) => setForm({ ...form, lease_term_months_min: Number(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="lease_term_months_max">Max Lease (months)</Label>
-                  <Input
-                    id="lease_term_months_max"
-                    type="number"
-                    value={form.lease_term_months_max || 12}
-                    onChange={(e) => setForm({ ...form, lease_term_months_max: Number(e.target.value) })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="min_household_income">Min Monthly Household Income ($)</Label>
+                <Input
+                  id="min_household_income"
+                  type="number"
+                  min="0"
+                  max="9999999"
+                  value={form.min_household_income}
+                  onChange={(e) => setForm({ ...form, min_household_income: Number(e.target.value) })}
+                  placeholder={`Default: ${form.rent_total * 3} (3x rent)`}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Leave blank to default to 3x rent</p>
               </div>
 
               <div>
-                <Label htmlFor="min_household_income_monthly">Min Monthly Household Income ($)</Label>
+                <Label htmlFor="max_occupants">Max Occupants</Label>
                 <Input
-                  id="min_household_income_monthly"
+                  id="max_occupants"
                   type="number"
-                  value={form.min_household_income_monthly || 0}
-                  onChange={(e) => setForm({ ...form, min_household_income_monthly: Number(e.target.value) })}
-                  placeholder="e.g., 3x rent"
+                  min="1"
+                  max="20"
+                  value={form.max_occupants}
+                  onChange={(e) => setForm({ ...form, max_occupants: Number(e.target.value) })}
                 />
               </div>
 
@@ -462,7 +498,7 @@ const LandlordListingForm = () => {
                 <Input
                   id="available_from"
                   type="date"
-                  value={form.available_from || ""}
+                  value={form.available_from}
                   onChange={(e) => setForm({ ...form, available_from: e.target.value })}
                 />
               </div>
