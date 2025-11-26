@@ -35,6 +35,8 @@ const ProfileSetup = () => {
     preferred_cities: [] as string[],
     preferred_state: "",
     is_public_profile: false,
+    id_verified: false,
+    income_verified: false,
   });
 
   const [role, setRole] = useState<"renter" | "landlord" | "both">("renter");
@@ -355,6 +357,60 @@ const ProfileSetup = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Verification Status - Only for renters */}
+              {(role === "renter" || role === "both") && (
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="text-lg font-semibold">Verification Status</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Verified profiles are more trustworthy to landlords and roommates
+                  </p>
+                  
+                  <div className="grid gap-4">
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Identity Verification</p>
+                        <p className="text-sm text-muted-foreground">
+                          {formData.id_verified ? "Verified ✓" : "Not verified"}
+                        </p>
+                      </div>
+                      {!formData.id_verified && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setFormData({ ...formData, id_verified: true });
+                            toast({ title: "Identity Verified!", description: "Mock verification successful" });
+                          }}
+                        >
+                          Verify ID
+                        </Button>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Income Verification</p>
+                        <p className="text-sm text-muted-foreground">
+                          {formData.income_verified ? "Verified ✓" : "Not verified"}
+                        </p>
+                      </div>
+                      {!formData.income_verified && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setFormData({ ...formData, income_verified: true });
+                            toast({ title: "Income Verified!", description: "Mock verification successful" });
+                          }}
+                        >
+                          Verify Income
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Profile Visibility */}
               <div className="space-y-4 border-t pt-4">

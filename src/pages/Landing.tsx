@@ -47,10 +47,10 @@ const Landing = () => {
         <div className="mx-auto max-w-7xl relative z-10 w-full">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl drop-shadow-lg">
-              Live Bigger with Less.
+              Roomates
             </h1>
             <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
-              Find your perfect shared living space. Browse verified rentals, match with compatible roommates, and make smarter housing decisions.
+              Roomates helps renters team up with verified roommates to share quality homes for less – and gives landlords a secure way to list properties to pre-verified tenants.
             </p>
 
             {/* Search Card */}

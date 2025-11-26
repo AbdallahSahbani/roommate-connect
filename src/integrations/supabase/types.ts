@@ -352,6 +352,8 @@ export type Database = {
           is_complete: boolean | null
           name: string
           preferred_cities: string[] | null
+          preferred_city: string | null
+          preferred_state: string | null
           target_move_in_date: string | null
           updated_at: string | null
         }
@@ -364,6 +366,8 @@ export type Database = {
           is_complete?: boolean | null
           name: string
           preferred_cities?: string[] | null
+          preferred_city?: string | null
+          preferred_state?: string | null
           target_move_in_date?: string | null
           updated_at?: string | null
         }
@@ -376,6 +380,8 @@ export type Database = {
           is_complete?: boolean | null
           name?: string
           preferred_cities?: string[] | null
+          preferred_city?: string | null
+          preferred_state?: string | null
           target_move_in_date?: string | null
           updated_at?: string | null
         }
@@ -486,6 +492,7 @@ export type Database = {
           preferred_cities: string[] | null
           preferred_state: string | null
           profile_photo_url: string | null
+          role: string | null
           self_reported_monthly_income: number | null
           sleep_schedule: string | null
           smoking: string | null
@@ -528,6 +535,7 @@ export type Database = {
           preferred_cities?: string[] | null
           preferred_state?: string | null
           profile_photo_url?: string | null
+          role?: string | null
           self_reported_monthly_income?: number | null
           sleep_schedule?: string | null
           smoking?: string | null
@@ -570,6 +578,7 @@ export type Database = {
           preferred_cities?: string[] | null
           preferred_state?: string | null
           profile_photo_url?: string | null
+          role?: string | null
           self_reported_monthly_income?: number | null
           sleep_schedule?: string | null
           smoking?: string | null
@@ -608,6 +617,7 @@ export type Database = {
           listing_type: string | null
           lng: number | null
           max_occupants: number | null
+          min_household_income: number | null
           min_household_income_monthly: number | null
           minimum_income_multiplier: number | null
           neighborhood: string | null
@@ -616,6 +626,7 @@ export type Database = {
           photos: string[] | null
           postal_code: string | null
           property_type: string | null
+          public_code: string | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
           rent_amount: number
@@ -658,6 +669,7 @@ export type Database = {
           listing_type?: string | null
           lng?: number | null
           max_occupants?: number | null
+          min_household_income?: number | null
           min_household_income_monthly?: number | null
           minimum_income_multiplier?: number | null
           neighborhood?: string | null
@@ -666,6 +678,7 @@ export type Database = {
           photos?: string[] | null
           postal_code?: string | null
           property_type?: string | null
+          public_code?: string | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
           rent_amount: number
@@ -708,6 +721,7 @@ export type Database = {
           listing_type?: string | null
           lng?: number | null
           max_occupants?: number | null
+          min_household_income?: number | null
           min_household_income_monthly?: number | null
           minimum_income_multiplier?: number | null
           neighborhood?: string | null
@@ -716,6 +730,7 @@ export type Database = {
           photos?: string[] | null
           postal_code?: string | null
           property_type?: string | null
+          public_code?: string | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
           rent_amount?: number
@@ -1054,6 +1069,7 @@ export type Database = {
       }
     }
     Functions: {
+      generate_property_code: { Args: { state_abbr: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
