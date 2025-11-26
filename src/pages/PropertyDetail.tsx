@@ -32,6 +32,7 @@ interface Property {
   external_listing_url: string | null;
   landlord_id: string | null;
   minimum_income_multiplier: number | null;
+  public_code: string | null;
 }
 
 const PropertyDetail = () => {
@@ -263,7 +264,14 @@ const PropertyDetail = () => {
             {/* Title and Address */}
             <div>
               <div className="flex items-start justify-between mb-2">
-                <h1 className="text-3xl font-bold">{property.title}</h1>
+                <div>
+                  <h1 className="text-3xl font-bold">{property.title}</h1>
+                  {property.public_code && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Listing ID: {property.public_code}
+                    </p>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   size="icon"
