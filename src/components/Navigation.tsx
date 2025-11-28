@@ -41,54 +41,65 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className="bg-background border-b border-border sticky top-0 z-50">
+    <nav className="bg-gradient-primary bg-grain border-b border-primary-light/20 sticky top-0 z-50 backdrop-blur-md shadow-card">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2">
-            <Home className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl text-foreground">Roomates</span>
+          <Link to="/" className="flex items-center gap-2 group">
+            <Home className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
+            <span className="font-bold text-xl text-white">Roomates</span>
           </Link>
 
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
               <Link to="/">
                 <Home className="h-4 w-4 mr-2" />
                 Home
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
               <Link to="/browse">
                 <Search className="h-4 w-4 mr-2" />
                 Find Roommates
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
               <Link to="/properties">
                 <Building2 className="h-4 w-4 mr-2" />
                 Properties
               </Link>
             </Button>
             {isLandlord && (
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/landlord/listings">
-                  <Building className="h-4 w-4 mr-2" />
-                  My Listings
-                </Link>
-              </Button>
+              <>
+                <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
+                  <Link to="/landlord/listings">
+                    <Building className="h-4 w-4 mr-2" />
+                    My Listings
+                  </Link>
+                </Button>
+                <Button 
+                  size="sm" 
+                  asChild 
+                  className="bg-white/20 text-white hover:bg-white/30 border border-white/30 shadow-glow ml-2"
+                >
+                  <Link to="/landlord/listings/new">
+                    Post a Property
+                  </Link>
+                </Button>
+              </>
             )}
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
               <Link to="/messages">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="text-white/90 hover:text-white hover:bg-white/10">
               <Link to="/profile-setup">
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white/90 hover:text-white hover:bg-white/10">
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>

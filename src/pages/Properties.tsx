@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Bed, Bath, Square, Heart, DollarSign } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Heart, DollarSign, ArrowUpDown } from "lucide-react";
+import { US_STATES, COUNTRIES } from "@/lib/locations";
 
 interface Property {
   id: string;
@@ -17,6 +18,7 @@ interface Property {
   street_address: string | null;
   city: string;
   state: string | null;
+  country: string | null;
   postal_code: string | null;
   rent_total: number | null;
   rent_amount: number;
@@ -27,6 +29,7 @@ interface Property {
   amenities: string[] | null;
   available_from: string | null;
   listing_source: string | null;
+  created_at: string;
 }
 
 const Properties = () => {
@@ -40,9 +43,11 @@ const Properties = () => {
   
   const [city, setCity] = useState(searchParams.get("city") || "");
   const [state, setState] = useState(searchParams.get("state") || "");
+  const [country, setCountry] = useState(searchParams.get("country") || "US");
   const [minRent, setMinRent] = useState(searchParams.get("minRent") || "");
   const [maxRent, setMaxRent] = useState(searchParams.get("maxRent") || "");
   const [bedrooms, setBedrooms] = useState(searchParams.get("bedrooms") || "");
+  const [sortBy, setSortBy] = useState<string>("newest");
 
   useEffect(() => {
     loadUserPreferences();
@@ -51,7 +56,7 @@ const Properties = () => {
 
   useEffect(() => {
     loadProperties();
-  }, [city, state, minRent, maxRent, bedrooms]);
+  }, [city, state, country, minRent, maxRent, bedrooms, sortBy]);
 
   const loadUserPreferences = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -67,7 +72,6 @@ const Properties = () => {
       .single();
 
     if (profile) {
-      // Set default filters from profile if search params are empty
       if (!searchParams.get("city") && profile.preferred_cities && Array.isArray(profile.preferred_cities) && profile.preferred_cities.length > 0) {
         setCity(profile.preferred_cities[0]);
       }
@@ -99,14 +103,16 @@ const Properties = () => {
       let query = supabase
         .from("properties")
         .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .eq("is_active", true);
 
       if (city) {
         query = query.ilike("city", `%${city}%`);
       }
       if (state && state !== "any") {
         query = query.eq("state", state);
+      }
+      if (country && country !== "any") {
+        query = query.eq("country", country);
       }
       if (minRent) {
         query = query.gte("rent_amount", parseInt(minRent));
@@ -116,6 +122,21 @@ const Properties = () => {
       }
       if (bedrooms && bedrooms !== "any") {
         query = query.gte("total_bedrooms", parseInt(bedrooms));
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case "price-asc":
+          query = query.order("rent_amount", { ascending: true });
+          break;
+        case "price-desc":
+          query = query.order("rent_amount", { ascending: false });
+          break;
+        case "newest":
+          query = query.order("created_at", { ascending: false });
+          break;
+        default:
+          query = query.order("created_at", { ascending: false });
       }
 
       const { data, error } = await query;
@@ -214,16 +235,19 @@ const Properties = () => {
       <Navigation />
       <SubscriptionBanner />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Find a place to live bigger with less.</h1>
-          <p className="text-muted-foreground">Browse verified rentals in your preferred location and budget.</p>
+      {/* Header with gradient */}
+      <div className="bg-gradient-primary bg-grain py-12 px-4">
+        <div className="container mx-auto">
+          <h1 className="text-4xl font-bold mb-2 text-white animate-fade-up">Find a place to live bigger with less.</h1>
+          <p className="text-white/90 animate-fade-in">Browse verified rentals in your preferred location and budget.</p>
         </div>
+      </div>
 
-        {/* Filter Bar */}
-        <Card className="mb-8">
+      <div className="container mx-auto px-4 py-8">
+        {/* Filter Bar with gradient border */}
+        <Card className="mb-8 shadow-hover border-2 border-transparent bg-gradient-to-r from-primary/10 to-accent/10 animate-scale-in">
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
@@ -233,21 +257,38 @@ const Properties = () => {
                   placeholder="New Haven"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
+                  className="transition-fast hover:border-primary"
                 />
               </div>
               <div className="space-y-2">
+                <label className="text-sm font-medium">Country</label>
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px] overflow-y-auto">
+                    <SelectItem value="any">Any Country</SelectItem>
+                    {COUNTRIES.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <label className="text-sm font-medium">State</label>
-                <Select value={state} onValueChange={setState}>
+                <Select value={state} onValueChange={setState} disabled={country !== "US"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="CT">Connecticut</SelectItem>
-                    <SelectItem value="NY">New York</SelectItem>
-                    <SelectItem value="MA">Massachusetts</SelectItem>
-                    <SelectItem value="RI">Rhode Island</SelectItem>
-                    <SelectItem value="NJ">New Jersey</SelectItem>
+                  <SelectContent className="max-h-[300px] overflow-y-auto">
+                    <SelectItem value="any">Any State</SelectItem>
+                    {US_STATES.map((s) => (
+                      <SelectItem key={s.code} value={s.code}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -261,6 +302,7 @@ const Properties = () => {
                   placeholder="1000"
                   value={minRent}
                   onChange={(e) => setMinRent(e.target.value)}
+                  className="transition-fast hover:border-primary"
                 />
               </div>
               <div className="space-y-2">
@@ -270,6 +312,7 @@ const Properties = () => {
                   placeholder="3500"
                   value={maxRent}
                   onChange={(e) => setMaxRent(e.target.value)}
+                  className="transition-fast hover:border-primary"
                 />
               </div>
               <div className="space-y-2">
@@ -291,46 +334,73 @@ const Properties = () => {
                 </Select>
               </div>
             </div>
-            <Button className="w-full mt-4" onClick={handleSearch}>
-              Search
-            </Button>
+            
+            <div className="flex items-center gap-4 mt-4">
+              <div className="flex-1">
+                <label className="text-sm font-medium flex items-center gap-2 mb-2">
+                  <ArrowUpDown className="h-4 w-4" />
+                  Sort By
+                </label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                    <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button className="mt-6 px-8 shadow-glow hover:shadow-hover transition-smooth bg-gradient-primary" onClick={handleSearch}>
+                Search
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Results Grid */}
         {properties.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-16 animate-fade-in">
             <p className="text-xl text-muted-foreground mb-4">No properties found matching your criteria.</p>
             <p className="text-muted-foreground">Try adjusting your filters or check back later for new listings.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((property) => (
-              <Card key={property.id} className="overflow-hidden hover:shadow-hover transition-shadow">
-                <div className="relative">
+            {properties.map((property, idx) => (
+              <Card 
+                key={property.id} 
+                className="overflow-hidden hover:shadow-glow transition-smooth cursor-pointer group animate-fade-up border-2 hover:border-primary/30"
+                style={{ animationDelay: `${idx * 50}ms` }}
+              >
+                <div className="relative overflow-hidden">
                   <img
                     src={property.photos?.[0] || "https://placehold.co/400x300/e5e5e5/666666?text=No+Image"}
                     alt={property.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-2 right-2 bg-white/90 hover:bg-white"
-                    onClick={() => toggleSave(property.id)}
+                    className="absolute top-2 right-2 bg-white/90 hover:bg-white backdrop-blur-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSave(property.id);
+                    }}
                   >
-                    <Heart className={`h-5 w-5 ${savedListings.has(property.id) ? "fill-primary text-primary" : ""}`} />
+                    <Heart className={`h-5 w-5 transition-fast ${savedListings.has(property.id) ? "fill-primary text-primary" : ""}`} />
                   </Button>
                 </div>
                 <CardHeader>
-                  <h3 className="text-xl font-semibold line-clamp-1">{property.title}</h3>
+                  <h3 className="text-xl font-semibold line-clamp-1 group-hover:text-primary transition-fast">{property.title}</h3>
                   <p className="text-sm text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
                     {property.city}{property.state ? `, ${property.state}` : ""}
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary mb-4">
+                  <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
                     ${(property.rent_total || property.rent_amount).toLocaleString()} / month
                   </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -352,7 +422,7 @@ const Properties = () => {
                   {property.amenities && property.amenities.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {property.amenities.slice(0, 3).map((amenity, idx) => (
-                        <span key={idx} className="text-xs bg-muted px-2 py-1 rounded">
+                        <span key={idx} className="text-xs bg-muted px-2 py-1 rounded hover:bg-primary/10 transition-fast">
                           {amenity}
                         </span>
                       ))}
@@ -361,7 +431,7 @@ const Properties = () => {
                 </CardContent>
                 <CardFooter>
                   <Button 
-                    className="w-full"
+                    className="w-full bg-gradient-accent hover:shadow-glow transition-smooth"
                     onClick={() => navigate(`/properties/${property.id}`)}
                   >
                     View Details
