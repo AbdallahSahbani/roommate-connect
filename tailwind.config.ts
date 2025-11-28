@@ -62,6 +62,7 @@ export default {
         'gradient-texture': 'var(--gradient-texture)',
         'gradient-nav': 'var(--gradient-nav)',
         'gradient-page': 'var(--gradient-page)',
+        'silk-texture': "url('/textures/silk-texture.png')",
       },
       boxShadow: {
         'card': 'var(--shadow-card)',
