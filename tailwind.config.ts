@@ -58,10 +58,9 @@ export default {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-secondary': 'var(--gradient-secondary)',
-        'gradient-card': 'var(--gradient-card)',
-        'gradient-accent': 'var(--gradient-accent)',
+        'gradient-subtle': 'var(--gradient-subtle)',
+        'gradient-texture': 'var(--gradient-texture)',
+        'gradient-nav': 'var(--gradient-nav)',
       },
       boxShadow: {
         'card': 'var(--shadow-card)',
@@ -71,6 +70,7 @@ export default {
       transitionTimingFunction: {
         'smooth': 'var(--transition-smooth)',
         'fast': 'var(--transition-fast)',
+        'bounce': 'var(--transition-bounce)',
       },
       borderRadius: {
         lg: "var(--radius)",
