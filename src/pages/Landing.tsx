@@ -225,40 +225,40 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-gradient-secondary bg-grain py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t bg-gradient-nav bg-grain py-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-lg mb-4 text-white">Roomates</h3>
-              <p className="text-sm text-white/70">
+              <h3 className="font-bold text-lg mb-4 text-primary-foreground">Roomates</h3>
+              <p className="text-sm text-primary-foreground/70">
                 Live Bigger with Less.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-white">Product</h4>
+              <h4 className="font-semibold mb-4 text-primary-foreground">Product</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/browse" className="text-white/70 hover:text-white transition-fast">Find Roommates</Link></li>
-                <li><Link to="/properties" className="text-white/70 hover:text-white transition-fast">Browse Properties</Link></li>
-                <li><Link to="/subscription" className="text-white/70 hover:text-white transition-fast">Pricing</Link></li>
+                <li><Link to="/browse" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Find Roommates</Link></li>
+                <li><Link to="/properties" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Browse Properties</Link></li>
+                <li><Link to="/subscription" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Pricing</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-white">Company</h4>
+              <h4 className="font-semibold mb-4 text-primary-foreground">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/board" className="text-white/70 hover:text-white transition-fast">Board</Link></li>
-                <li><Link to="/careers" className="text-white/70 hover:text-white transition-fast">Careers</Link></li>
-                <li><Link to="/contact" className="text-white/70 hover:text-white transition-fast">Contact</Link></li>
+                <li><Link to="/board" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Board</Link></li>
+                <li><Link to="/careers" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Careers</Link></li>
+                <li><Link to="/contact" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Contact</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-white">Legal</h4>
+              <h4 className="font-semibold mb-4 text-primary-foreground">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="#" className="text-white/70 hover:text-white transition-fast">Privacy Policy</Link></li>
-                <li><Link to="#" className="text-white/70 hover:text-white transition-fast">Terms of Service</Link></li>
+                <li><Link to="#" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Privacy Policy</Link></li>
+                <li><Link to="#" className="text-primary-foreground/70 hover:text-primary-foreground transition-bounce hover:translate-x-1">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/20 text-center text-sm text-white/70">
+          <div className="mt-8 pt-8 border-t border-primary-foreground/20 text-center text-sm text-primary-foreground/70">
             <p>&copy; 2025 Roomates. All rights reserved.</p>
           </div>
         </div>
@@ -268,8 +268,8 @@ const Landing = () => {
 };
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
-  <div className="bg-card rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth border-2 border-transparent hover:border-primary/20 group animate-fade-up">
-    <div className="mb-4 group-hover:scale-110 transition-transform">{icon}</div>
+  <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
+    <div className="mb-4 group-hover:scale-110 transition-bounce">{icon}</div>
     <h3 className="text-xl font-semibold mb-2 text-card-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
   </div>
@@ -277,7 +277,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; titl
 
 const StepCard = ({ number, title, description }: { number: string; title: string; description: string }) => (
   <div className="text-center animate-scale-in group">
-    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-primary text-white text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-transform">
+    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-bounce">
       {number}
     </div>
     <h3 className="text-xl font-semibold mb-2 text-foreground">{title}</h3>

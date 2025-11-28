@@ -231,21 +231,21 @@ const Properties = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white-gradient bg-grain">
       <Navigation />
       <SubscriptionBanner />
       
-      {/* Header with gradient */}
-      <div className="bg-gradient-primary bg-grain py-12 px-4">
+      {/* Header with subtle gradient */}
+      <div className="bg-texture py-12 px-4 border-b border-border">
         <div className="container mx-auto">
-          <h1 className="text-4xl font-bold mb-2 text-white animate-fade-up">Find a place to live bigger with less.</h1>
-          <p className="text-white/90 animate-fade-in">Browse verified rentals in your preferred location and budget.</p>
+          <h1 className="text-4xl font-bold mb-2 text-foreground animate-fade-up">Find a place to live bigger with less.</h1>
+          <p className="text-muted-foreground animate-fade-in">Browse verified rentals in your preferred location and budget.</p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Filter Bar with gradient border */}
-        <Card className="mb-8 shadow-hover border-2 border-transparent bg-gradient-to-r from-primary/10 to-accent/10 animate-scale-in">
+        {/* Filter Bar with subtle texture */}
+        <Card className="mb-8 shadow-hover bg-texture animate-scale-in">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               <div className="space-y-2">
@@ -352,7 +352,7 @@ const Properties = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="mt-6 px-8 shadow-glow hover:shadow-hover transition-smooth bg-gradient-primary" onClick={handleSearch}>
+              <Button className="mt-6 px-8" onClick={handleSearch}>
                 Search
               </Button>
             </div>
@@ -370,16 +370,16 @@ const Properties = () => {
             {properties.map((property, idx) => (
               <Card 
                 key={property.id} 
-                className="overflow-hidden hover:shadow-glow transition-smooth cursor-pointer group animate-fade-up border-2 hover:border-primary/30"
+                className="overflow-hidden hover:shadow-glow transition-smooth cursor-pointer group animate-fade-up bg-texture hover:scale-105"
                 style={{ animationDelay: `${idx * 50}ms` }}
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={property.photos?.[0] || "https://placehold.co/400x300/e5e5e5/666666?text=No+Image"}
                     alt={property.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Button
                     variant="ghost"
                     size="icon"
@@ -400,7 +400,7 @@ const Properties = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+                  <div className="text-2xl font-bold text-primary mb-4">
                     ${(property.rent_total || property.rent_amount).toLocaleString()} / month
                   </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -422,7 +422,7 @@ const Properties = () => {
                   {property.amenities && property.amenities.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {property.amenities.slice(0, 3).map((amenity, idx) => (
-                        <span key={idx} className="text-xs bg-muted px-2 py-1 rounded hover:bg-primary/10 transition-fast">
+                        <span key={idx} className="text-xs bg-muted px-2 py-1 rounded hover:bg-primary/20 transition-bounce hover:scale-110">
                           {amenity}
                         </span>
                       ))}
@@ -431,7 +431,7 @@ const Properties = () => {
                 </CardContent>
                 <CardFooter>
                   <Button 
-                    className="w-full bg-gradient-accent hover:shadow-glow transition-smooth"
+                    className="w-full"
                     onClick={() => navigate(`/properties/${property.id}`)}
                   >
                     View Details

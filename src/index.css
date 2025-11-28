@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 97%;
+    --background: 0 0% 100%;
     --foreground: 345 70% 15%;
 
     --card: 0 0% 100%;
@@ -17,43 +17,43 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 345 70% 15%;
 
-    --primary: 345 70% 40%;
-    --primary-light: 345 60% 50%;
-    --primary-dark: 345 80% 30%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 345 80% 25%;
+    --primary-light: 345 70% 35%;
+    --primary-dark: 345 90% 20%;
+    --primary-foreground: 0 0% 95%;
 
     --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary-foreground: 0 0% 95%;
 
-    --accent: 345 70% 48%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 345 80% 25%;
+    --accent-foreground: 0 0% 95%;
 
-    --muted: 0 0% 94%;
+    --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
     --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 95%;
 
     --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 0 0% 95%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 345 70% 40%;
+    --border: 0 0% 90%;
+    --input: 0 0% 94%;
+    --ring: 345 80% 25%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(345 70% 40%) 0%, hsl(280 60% 45%) 100%);
-    --gradient-secondary: linear-gradient(180deg, hsl(345 70% 35%) 0%, hsl(345 80% 25%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 99%) 100%);
-    --gradient-accent: linear-gradient(120deg, hsl(345 70% 40%) 0%, hsl(345 60% 50%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-texture: linear-gradient(135deg, hsl(0 0% 99%) 0%, hsl(0 0% 97%) 100%);
+    --gradient-nav: linear-gradient(135deg, hsl(345 80% 25%) 0%, hsl(345 90% 20%) 100%);
     
-    --shadow-card: 0 2px 12px -2px hsl(345 70% 40% / 0.08);
-    --shadow-hover: 0 8px 32px -4px hsl(345 70% 40% / 0.18);
-    --shadow-glow: 0 0 40px hsl(345 70% 40% / 0.3);
+    --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.08);
+    --shadow-hover: 0 8px 32px -4px hsl(0 0% 0% / 0.15);
+    --shadow-glow: 0 4px 24px -4px hsl(345 80% 25% / 0.25);
     
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
@@ -112,25 +112,32 @@ All colors MUST be HSL.
   }
 }
 
-/* Subtle grain texture for backgrounds */
+/* Subtle grain texture and gradients for backgrounds */
 @layer utilities {
   .bg-grain {
-    background-image: 
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-  }
-  
-  .gradient-border {
     position: relative;
-    border-radius: var(--radius);
-    background: var(--gradient-primary);
-    padding: 2px;
   }
   
-  .gradient-border::before {
+  .bg-grain::before {
     content: '';
     position: absolute;
-    inset: 2px;
-    background: hsl(var(--card));
-    border-radius: calc(var(--radius) - 2px);
+    inset: 0;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .bg-grain > * {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .bg-white-gradient {
+    background: var(--gradient-subtle);
+  }
+  
+  .bg-texture {
+    background: var(--gradient-texture);
   }
 }
