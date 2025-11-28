@@ -387,6 +387,42 @@ export type Database = {
         }
         Relationships: []
       }
+      id_verifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          id_back_path: string
+          id_front_path: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          id_back_path: string
+          id_front_path: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          id_back_path?: string
+          id_front_path?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       income_verifications: {
         Row: {
           admin_notes: string | null
@@ -475,6 +511,7 @@ export type Database = {
           full_name: string | null
           guest_frequency: string | null
           id: string
+          id_verification_status: string | null
           id_verified: boolean | null
           income_verified: boolean | null
           income_verified_source: string | null
@@ -518,6 +555,7 @@ export type Database = {
           full_name?: string | null
           guest_frequency?: string | null
           id: string
+          id_verification_status?: string | null
           id_verified?: boolean | null
           income_verified?: boolean | null
           income_verified_source?: string | null
@@ -561,6 +599,7 @@ export type Database = {
           full_name?: string | null
           guest_frequency?: string | null
           id?: string
+          id_verification_status?: string | null
           id_verified?: boolean | null
           income_verified?: boolean | null
           income_verified_source?: string | null

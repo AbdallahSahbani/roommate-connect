@@ -7,8 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Camera, Upload, CheckCircle, Loader2 } from "lucide-react";
+import { Camera, Upload, CheckCircle, Loader2, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { 
+  validateImageFile, 
+  uploadVerificationDocument, 
+  submitIdVerification,
+  getVerificationStatus 
+} from "@/lib/verification";
 
 export default function Verification() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -19,6 +26,8 @@ export default function Verification() {
   // Identity verification
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
+  const [idVerificationStatus, setIdVerificationStatus] = useState<string>('not_started');
+  const [isIdVerified, setIsIdVerified] = useState<boolean>(false);
   
   // Face verification
   const [selfie, setSelfie] = useState<string | null>(null);
@@ -41,10 +50,19 @@ export default function Verification() {
         return;
       }
       setUserId(user.id);
-      fetchVerifications(user.id);
+      await fetchVerifications(user.id);
+      await loadIdVerificationStatus(user.id);
     };
     checkAuth();
   }, [navigate]);
+
+  const loadIdVerificationStatus = async (uid: string) => {
+    const { profile } = await getVerificationStatus(uid);
+    if (profile) {
+      setIdVerificationStatus(profile.id_verification_status || 'not_started');
+      setIsIdVerified(profile.id_verified || false);
+    }
+  };
 
   const fetchVerifications = async (uid: string) => {
     const { data } = await supabase
@@ -109,31 +127,55 @@ export default function Verification() {
       return;
     }
 
+    // Validate files
+    const frontValidation = validateImageFile(idFront);
+    if (!frontValidation.valid) {
+      toast({
+        title: "Invalid File",
+        description: `Front: ${frontValidation.error}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const backValidation = validateImageFile(idBack);
+    if (!backValidation.valid) {
+      toast({
+        title: "Invalid File",
+        description: `Back: ${backValidation.error}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      // Simulate verification process
-      const confidence = Math.floor(Math.random() * 15) + 85; // 85-100
+      // Upload front image
+      const frontUpload = await uploadVerificationDocument(userId, idFront, 'front');
+      if (frontUpload.error) {
+        throw new Error(`Failed to upload front: ${frontUpload.error}`);
+      }
+
+      // Upload back image
+      const backUpload = await uploadVerificationDocument(userId, idBack, 'back');
+      if (backUpload.error) {
+        throw new Error(`Failed to upload back: ${backUpload.error}`);
+      }
+
+      // Submit verification
+      const result = await submitIdVerification(userId, frontUpload.path!, backUpload.path!);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      setIdVerificationStatus('submitted');
       
-      const { error } = await supabase.from("verifications").upsert({
-        user_id: userId,
-        verification_type: "identity",
-        status: confidence > 90 ? "verified" : "pending",
-        confidence_score: confidence,
-        document_urls: ["id_front_url", "id_back_url"], // In production, upload to storage
-      });
-
-      if (error) throw error;
-
-      // Update profile
-      await supabase.from("profiles").update({ id_verified: true }).eq("id", userId);
-
       toast({
-        title: "ID Verified!",
-        description: `Verification successful (${confidence}% confidence)`,
+        title: "ID Submitted!",
+        description: "Your ID has been submitted for review. You'll be notified once it's verified.",
       });
 
       fetchVerifications(userId);
-      setActiveTab("face");
     } catch (error: any) {
       toast({
         title: "Verification Failed",
@@ -265,30 +307,69 @@ export default function Verification() {
                 <CardDescription>Upload front and back of your government-issued ID</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="id-front">ID Front</Label>
-                  <Input
-                    id="id-front"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setIdFront(e.target.files?.[0] || null)}
-                  />
-                  {idFront && <p className="text-sm text-muted-foreground mt-1">✓ {idFront.name}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="id-back">ID Back</Label>
-                  <Input
-                    id="id-back"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setIdBack(e.target.files?.[0] || null)}
-                  />
-                  {idBack && <p className="text-sm text-muted-foreground mt-1">✓ {idBack.name}</p>}
-                </div>
-                <Button onClick={handleIdentityVerification} disabled={loading || !idFront || !idBack}>
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
-                  Verify Identity
-                </Button>
+                {isIdVerified && (
+                  <Alert className="bg-success/10 border-success">
+                    <CheckCircle className="h-4 w-4 text-success" />
+                    <AlertTitle>ID Verified ✅</AlertTitle>
+                    <AlertDescription>
+                      Your identity has been successfully verified.
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
+                {idVerificationStatus === 'submitted' && !isIdVerified && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Pending Manual Review</AlertTitle>
+                    <AlertDescription>
+                      Your ID documents have been submitted and are awaiting review. This typically takes 1-2 business days.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {idVerificationStatus === 'not_started' && (
+                  <>
+                    <div>
+                      <Label htmlFor="id-front">ID Front (JPEG/PNG, max 10MB)</Label>
+                      <Input
+                        id="id-front"
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg"
+                        onChange={(e) => setIdFront(e.target.files?.[0] || null)}
+                        disabled={loading}
+                      />
+                      {idFront && <p className="text-sm text-muted-foreground mt-1">✓ {idFront.name}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="id-back">ID Back (JPEG/PNG, max 10MB)</Label>
+                      <Input
+                        id="id-back"
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg"
+                        onChange={(e) => setIdBack(e.target.files?.[0] || null)}
+                        disabled={loading}
+                      />
+                      {idBack && <p className="text-sm text-muted-foreground mt-1">✓ {idBack.name}</p>}
+                    </div>
+                    <Button 
+                      onClick={handleIdentityVerification} 
+                      disabled={loading || !idFront || !idBack}
+                      className="w-full"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Submit for Verification
+                        </>
+                      )}
+                    </Button>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
