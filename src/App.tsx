@@ -21,6 +21,13 @@ import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 import Board from "./pages/Board";
 import NotFound from "./pages/NotFound";
+import LandlordDashboard from "./pages/landlord/LandlordDashboard";
+import LandlordListingsPage from "./pages/landlord/LandlordListings";
+import RoommateSwipe from "./pages/RoommateSwipe";
+import Subscribe from "./pages/Subscribe";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminVerifications from "./pages/admin/AdminVerifications";
+import AdminLogs from "./pages/admin/AdminLogs";
 
 const queryClient = new QueryClient();
 
@@ -38,14 +45,20 @@ const App = () => (
           <Route path="/browse" element={<Browse />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
-          <Route path="/landlord/listings" element={<LandlordListings />} />
+          <Route path="/landlord/dashboard" element={<LandlordDashboard />} />
+          <Route path="/landlord/listings" element={<LandlordListingsPage />} />
           <Route path="/landlord/listings/new" element={<LandlordListingForm />} />
           <Route path="/landlord/listings/:id/edit" element={<LandlordListingForm />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/verification" element={<Verification />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/income-verification" element={<IncomeVerification />} />
+          <Route path="/roommates/swipe" element={<RoommateSwipe />} />
+          <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/verifications" element={<AdminVerifications />} />
+          <Route path="/admin/logs" element={<AdminLogs />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/board" element={<Board />} />

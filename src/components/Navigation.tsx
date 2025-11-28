@@ -1,32 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, User, Search, MessageSquare, Building2, LogOut, Shield, Building } from "lucide-react";
+import { Home, User, Search, MessageSquare, Building2, LogOut, Shield, Building, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrentUserRole } from "@/hooks/useCurrentUserRole";
 import logo from "@/assets/roommates-logo.png";
 
 export const Navigation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLandlord, setIsLandlord] = useState(false);
-
-  useEffect(() => {
-    checkLandlordRole();
-  }, []);
-
-  const checkLandlordRole = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", session.user.id)
-      .single();
-
-    setIsLandlord(profile?.role === 'landlord' || profile?.role === 'both');
-  };
+  const { isLandlord, isAdmin } = useCurrentUserRole();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -62,8 +46,8 @@ export const Navigation = () => {
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-              <Link to="/browse">
-                <Search className="h-4 w-4 mr-2" />
+              <Link to="/roommates/swipe">
+                <Heart className="h-4 w-4 mr-2" />
                 Find Roommates
               </Link>
             </Button>
@@ -76,21 +60,20 @@ export const Navigation = () => {
             {isLandlord && (
               <>
                 <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/landlord/listings">
+                  <Link to="/landlord/dashboard">
                     <Building className="h-4 w-4 mr-2" />
                     My Listings
                   </Link>
                 </Button>
-                <Button 
-                  size="sm" 
-                  asChild 
-                  className="bg-white/20 text-primary-foreground hover:bg-white/30 border border-white/30 shadow-glow ml-2 font-medium"
-                >
-                  <Link to="/landlord/listings/new">
-                    Post a Property
-                  </Link>
-                </Button>
               </>
+            )}
+            {isAdmin && (
+              <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                <Link to="/admin/verifications">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Admin
+                </Link>
+              </Button>
             )}
             <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
               <Link to="/messages">
