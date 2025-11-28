@@ -231,7 +231,7 @@ const Properties = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white-gradient bg-grain">
+    <div className="min-h-screen relative">
       <Navigation />
       <SubscriptionBanner />
       

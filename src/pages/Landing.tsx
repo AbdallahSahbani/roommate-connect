@@ -30,7 +30,7 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
       {/* Hero Section with Search */}
       <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 min-h-[700px] flex items-center">
         <div 
