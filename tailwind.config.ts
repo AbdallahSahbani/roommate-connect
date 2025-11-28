@@ -61,6 +61,7 @@ export default {
         'gradient-subtle': 'var(--gradient-subtle)',
         'gradient-texture': 'var(--gradient-texture)',
         'gradient-nav': 'var(--gradient-nav)',
+        'gradient-page': 'var(--gradient-page)',
       },
       boxShadow: {
         'card': 'var(--shadow-card)',
