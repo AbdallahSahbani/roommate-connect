@@ -122,6 +122,36 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           city_name: string
@@ -456,6 +486,30 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           verified_monthly_income?: number | null
+        }
+        Relationships: []
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          user_id_1: string
+          user_id_2: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_id_1: string
+          user_id_2: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_id_1?: string
+          user_id_2?: string
         }
         Relationships: []
       }
