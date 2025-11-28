@@ -5,48 +5,39 @@ import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } 
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import nycSkyline from "@/assets/nyc-skyline.png";
-
 const Landing = () => {
   const navigate = useNavigate();
   const [searchCity, setSearchCity] = useState("");
   const [searchState, setSearchState] = useState("");
   const [maxRent, setMaxRent] = useState("");
   const [bedrooms, setBedrooms] = useState("");
-
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (searchCity) params.append("city", searchCity);
     if (searchState) params.append("state", searchState);
     if (maxRent) params.append("maxRent", maxRent);
     if (bedrooms && bedrooms !== "any") params.append("bedrooms", bedrooms);
-    
     navigate(`/properties?${params.toString()}`);
   };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
-
-  return (
-    <div className="min-h-screen relative">
+  return <div className="min-h-screen relative">
       {/* Hero Section with Search */}
       <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 min-h-[700px] flex items-center">
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${nycSkyline})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
+        <div className="absolute inset-0 z-0" style={{
+        backgroundImage: `url(${nycSkyline})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
         </div>
         <div className="mx-auto max-w-7xl relative z-10 w-full">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl drop-shadow-lg">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl drop-shadow-lg font-serif text-[#a2a2a2] md:text-7xl">
               Roomates
             </h1>
             <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
@@ -62,13 +53,7 @@ const Landing = () => {
                       <MapPin className="h-4 w-4" />
                       City
                     </label>
-                    <Input
-                      placeholder="New Haven"
-                      value={searchCity}
-                      onChange={(e) => setSearchCity(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="bg-background"
-                    />
+                    <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-card-foreground">State</label>
@@ -90,14 +75,7 @@ const Landing = () => {
                       <DollarSign className="h-4 w-4" />
                       Max Rent
                     </label>
-                    <Input
-                      type="number"
-                      placeholder="3500"
-                      value={maxRent}
-                      onChange={(e) => setMaxRent(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="bg-background"
-                    />
+                    <Input type="number" placeholder="3500" value={maxRent} onChange={e => setMaxRent(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
@@ -118,11 +96,7 @@ const Landing = () => {
                     </Select>
                   </div>
                 </div>
-                <Button 
-                  size="lg" 
-                  className="w-full mt-6"
-                  onClick={handleSearch}
-                >
+                <Button size="lg" className="w-full mt-6" onClick={handleSearch}>
                   Search Properties
                 </Button>
               </div>
@@ -157,26 +131,10 @@ const Landing = () => {
             Why Choose Roomates?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard
-              icon={<Users className="h-8 w-8 text-primary" />}
-              title="Smart Matching"
-              description="Our compatibility algorithm finds roommates who truly match your lifestyle and preferences."
-            />
-            <FeatureCard
-              icon={<Shield className="h-8 w-8 text-primary" />}
-              title="Verified Users"
-              description="ID verification, income checks, and background screening ensure your safety."
-            />
-            <FeatureCard
-              icon={<Home className="h-8 w-8 text-primary" />}
-              title="Quality Listings"
-              description="Browse verified properties from trusted landlords across your preferred cities."
-            />
-            <FeatureCard
-              icon={<CheckCircle className="h-8 w-8 text-primary" />}
-              title="Group Applications"
-              description="Form groups with compatible roommates and apply to properties together."
-            />
+            <FeatureCard icon={<Users className="h-8 w-8 text-primary" />} title="Smart Matching" description="Our compatibility algorithm finds roommates who truly match your lifestyle and preferences." />
+            <FeatureCard icon={<Shield className="h-8 w-8 text-primary" />} title="Verified Users" description="ID verification, income checks, and background screening ensure your safety." />
+            <FeatureCard icon={<Home className="h-8 w-8 text-primary" />} title="Quality Listings" description="Browse verified properties from trusted landlords across your preferred cities." />
+            <FeatureCard icon={<CheckCircle className="h-8 w-8 text-primary" />} title="Group Applications" description="Form groups with compatible roommates and apply to properties together." />
           </div>
         </div>
       </section>
@@ -188,21 +146,9 @@ const Landing = () => {
             How It Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StepCard
-              number="1"
-              title="Search for Your Place"
-              description="Browse verified rentals in your preferred location and budget range."
-            />
-            <StepCard
-              number="2"
-              title="Find Compatible Roommates"
-              description="Connect with roommates who match your lifestyle and preferences."
-            />
-            <StepCard
-              number="3"
-              title="Apply Together"
-              description="Form groups and apply to rental properties with confidence."
-            />
+            <StepCard number="1" title="Search for Your Place" description="Browse verified rentals in your preferred location and budget range." />
+            <StepCard number="2" title="Find Compatible Roommates" description="Connect with roommates who match your lifestyle and preferences." />
+            <StepCard number="3" title="Apply Together" description="Form groups and apply to rental properties with confidence." />
           </div>
         </div>
       </section>
@@ -263,26 +209,34 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
-  <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
+const FeatureCard = ({
+  icon,
+  title,
+  description
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) => <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
     <div className="mb-4 group-hover:scale-110 transition-bounce">{icon}</div>
     <h3 className="text-xl font-semibold mb-2 text-card-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
-  </div>
-);
-
-const StepCard = ({ number, title, description }: { number: string; title: string; description: string }) => (
-  <div className="text-center animate-scale-in group">
+  </div>;
+const StepCard = ({
+  number,
+  title,
+  description
+}: {
+  number: string;
+  title: string;
+  description: string;
+}) => <div className="text-center animate-scale-in group">
     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-bounce">
       {number}
     </div>
     <h3 className="text-xl font-semibold mb-2 text-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
-  </div>
-);
-
+  </div>;
 export default Landing;
