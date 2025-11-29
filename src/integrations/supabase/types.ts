@@ -79,40 +79,42 @@ export type Database = {
       }
       applications: {
         Row: {
+          applicant_id: string
           created_at: string | null
-          group_id: string | null
           id: string
-          message: string | null
-          property_id: string | null
+          meets_background: boolean
+          meets_capacity: boolean
+          meets_income: boolean
+          meets_verification: boolean
+          property_id: string
           status: string | null
           updated_at: string | null
         }
         Insert: {
+          applicant_id: string
           created_at?: string | null
-          group_id?: string | null
           id?: string
-          message?: string | null
-          property_id?: string | null
+          meets_background: boolean
+          meets_capacity: boolean
+          meets_income: boolean
+          meets_verification: boolean
+          property_id: string
           status?: string | null
           updated_at?: string | null
         }
         Update: {
+          applicant_id?: string
           created_at?: string | null
-          group_id?: string | null
           id?: string
-          message?: string | null
-          property_id?: string | null
+          meets_background?: boolean
+          meets_capacity?: boolean
+          meets_income?: boolean
+          meets_verification?: boolean
+          property_id?: string
           status?: string | null
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "applications_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "applications_property_id_fkey"
             columns: ["property_id"]
@@ -724,6 +726,9 @@ export type Database = {
           quiet_hours_start: string | null
           rent_amount: number
           rent_total: number | null
+          required_background_check: boolean | null
+          required_id_verified: boolean | null
+          required_income_verified: boolean | null
           security_deposit: number | null
           smoking_allowed: boolean | null
           square_feet: number | null
@@ -776,6 +781,9 @@ export type Database = {
           quiet_hours_start?: string | null
           rent_amount: number
           rent_total?: number | null
+          required_background_check?: boolean | null
+          required_id_verified?: boolean | null
+          required_income_verified?: boolean | null
           security_deposit?: number | null
           smoking_allowed?: boolean | null
           square_feet?: number | null
@@ -828,6 +836,9 @@ export type Database = {
           quiet_hours_start?: string | null
           rent_amount?: number
           rent_total?: number | null
+          required_background_check?: boolean | null
+          required_id_verified?: boolean | null
+          required_income_verified?: boolean | null
           security_deposit?: number | null
           smoking_allowed?: boolean | null
           square_feet?: number | null

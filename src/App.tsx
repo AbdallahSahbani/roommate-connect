@@ -28,6 +28,7 @@ import Subscribe from "./pages/Subscribe";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminVerifications from "./pages/admin/AdminVerifications";
 import AdminLogs from "./pages/admin/AdminLogs";
+import LandlordApplications from "./pages/landlord/LandlordApplications";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/landlord/listings" element={<LandlordListingsPage />} />
           <Route path="/landlord/listings/new" element={<LandlordListingForm />} />
           <Route path="/landlord/listings/:id/edit" element={<LandlordListingForm />} />
+          <Route path="/landlord/applications" element={<LandlordApplications />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/verification" element={<Verification />} />
           <Route path="/subscription" element={<Subscription />} />
