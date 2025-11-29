@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Navigation } from "@/components/Navigation";
 
 const ProfileSetup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -125,8 +126,10 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      <div className="max-w-3xl mx-auto">
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-background py-8 px-4">
+        <div className="max-w-3xl mx-auto">
         <Card className="shadow-hover">
           <CardHeader>
             <CardTitle>Complete Your Profile</CardTitle>
@@ -444,6 +447,7 @@ const ProfileSetup = () => {
         </Card>
       </div>
     </div>
+    </>
   );
 };
 
