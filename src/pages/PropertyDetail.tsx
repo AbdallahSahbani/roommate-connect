@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { 
   MapPin, Bed, Bath, Square, Heart, Calendar, 
-  DollarSign, ExternalLink, CheckCircle, ArrowLeft 
+  DollarSign, ExternalLink, CheckCircle, ArrowLeft, Users 
 } from "lucide-react";
+import { checkEligibility, getApprovedCount, createApplication, checkExistingApplication } from "@/lib/applications";
 
 interface Property {
   id: string;
@@ -33,6 +35,11 @@ interface Property {
   landlord_id: string | null;
   minimum_income_multiplier: number | null;
   public_code: string | null;
+  max_occupants: number | null;
+  min_household_income: number | null;
+  required_id_verified: boolean | null;
+  required_income_verified: boolean | null;
+  required_background_check: boolean | null;
 }
 
 const PropertyDetail = () => {
@@ -46,13 +53,34 @@ const PropertyDetail = () => {
   const [message, setMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
   const [isLandlordVerified, setIsLandlordVerified] = useState(false);
+  const [approvedCount, setApprovedCount] = useState(0);
+  const [showEligibilityDialog, setShowEligibilityDialog] = useState(false);
+  const [eligibilityReasons, setEligibilityReasons] = useState<string[]>([]);
+  const [applying, setApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     if (id) {
       loadProperty();
       checkIfSaved();
+      loadApprovedCount();
+      checkIfApplied();
     }
   }, [id]);
+
+  const loadApprovedCount = async () => {
+    if (!id) return;
+    const count = await getApprovedCount(id);
+    setApprovedCount(count);
+  };
+
+  const checkIfApplied = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !id) return;
+
+    const { data } = await checkExistingApplication(id, session.user.id);
+    setHasApplied(!!data);
+  };
 
   const loadProperty = async () => {
     setLoading(true);
@@ -145,6 +173,68 @@ const PropertyDetail = () => {
         description: error.message,
         variant: "destructive",
       });
+    }
+  };
+
+  const handleApply = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+
+    if (!property) return;
+
+    setApplying(true);
+    try {
+      // Check if already applied
+      const { data: existingApp } = await checkExistingApplication(id!, session.user.id);
+      if (existingApp) {
+        toast({
+          title: "Already Applied",
+          description: "You have already applied to this property",
+        });
+        setHasApplied(true);
+        setApplying(false);
+        return;
+      }
+
+      // Get user profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id_verified, income_verified, background_check_status, self_reported_monthly_income")
+        .eq("id", session.user.id)
+        .single();
+
+      // Check eligibility
+      const eligibility = checkEligibility(profile, property, approvedCount);
+
+      if (!eligibility.canApply) {
+        setEligibilityReasons(eligibility.reasons);
+        setShowEligibilityDialog(true);
+        setApplying(false);
+        return;
+      }
+
+      // Create application
+      const { error } = await createApplication(id!, session.user.id, eligibility.flags);
+
+      if (error) throw error;
+
+      toast({
+        title: "Application Submitted",
+        description: "Your application has been sent to the landlord. You'll see updates in Messages.",
+      });
+      setHasApplied(true);
+      loadApprovedCount();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -395,12 +485,27 @@ const PropertyDetail = () => {
                   </div>
                 )}
 
+                {property.max_occupants && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="h-4 w-4" />
+                    {approvedCount} / {property.max_occupants} spots filled
+                  </div>
+                )}
+
                 <div className="pt-4 border-t">
                   <div className="text-sm text-muted-foreground mb-1">Estimated min. income:</div>
                   <div className="text-xl font-semibold">${estimatedIncome.toLocaleString()}/mo</div>
                 </div>
 
                 <div className="space-y-3">
+                  <Button 
+                    className="w-full" 
+                    onClick={handleApply}
+                    disabled={applying || hasApplied || (property.max_occupants != null && approvedCount >= property.max_occupants)}
+                  >
+                    {applying ? "Applying..." : hasApplied ? "Already Applied" : (property.max_occupants != null && approvedCount >= property.max_occupants) ? "Listing Full" : "Apply for this Property"}
+                  </Button>
+                  
                   <Textarea
                     placeholder="Hi, I'm interested in this property. Is it still available?"
                     value={message}
@@ -409,6 +514,7 @@ const PropertyDetail = () => {
                   />
                   <Button 
                     className="w-full" 
+                    variant="outline"
                     onClick={sendInquiry}
                     disabled={sendingMessage}
                   >
@@ -433,6 +539,34 @@ const PropertyDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Eligibility Dialog */}
+      <AlertDialog open={showEligibilityDialog} onOpenChange={setShowEligibilityDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Can't Apply Yet</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>You don't meet the following requirements:</p>
+              <ul className="list-disc pl-5 space-y-2">
+                {eligibilityReasons.map((reason, idx) => (
+                  <li key={idx}>{reason}</li>
+                ))}
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowEligibilityDialog(false)}>
+              Close
+            </Button>
+            <Button onClick={() => {
+              setShowEligibilityDialog(false);
+              navigate("/verification");
+            }}>
+              Go to Verification Center
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
