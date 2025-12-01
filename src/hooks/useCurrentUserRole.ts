@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface UserRole {
-  profileRole: string | null;
   isAdmin: boolean;
   isLandlord: boolean;
   isRenter: boolean;
@@ -11,7 +10,6 @@ export interface UserRole {
 
 export function useCurrentUserRole(): UserRole {
   const [role, setRole] = useState<UserRole>({
-    profileRole: null,
     isAdmin: false,
     isLandlord: false,
     isRenter: false,
@@ -19,13 +17,12 @@ export function useCurrentUserRole(): UserRole {
   });
 
   useEffect(() => {
-    async function fetchRole() {
+    async function fetchRoles() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
           setRole({
-            profileRole: null,
             isAdmin: false,
             isLandlord: false,
             isRenter: false,
@@ -34,34 +31,23 @@ export function useCurrentUserRole(): UserRole {
           return;
         }
 
-        // Fetch profile role
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-
-        // Check admin status
-        const { data: adminRole } = await supabase
+        // Fetch ALL roles from user_roles table (security-compliant)
+        const { data: userRoles } = await supabase
           .from("user_roles")
           .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .single();
+          .eq("user_id", user.id);
 
-        const profileRole = profile?.role || "renter";
+        const roles = userRoles?.map(r => r.role) || [];
         
         setRole({
-          profileRole,
-          isAdmin: !!adminRole,
-          isLandlord: profileRole === "landlord" || profileRole === "both",
-          isRenter: profileRole === "renter" || profileRole === "both",
+          isAdmin: roles.includes("admin"),
+          isLandlord: roles.includes("landlord"),
+          isRenter: roles.includes("renter"),
           loading: false,
         });
       } catch (error) {
-        console.error("Error fetching user role:", error);
+        console.error("Error fetching user roles:", error);
         setRole({
-          profileRole: null,
           isAdmin: false,
           isLandlord: false,
           isRenter: false,
@@ -70,7 +56,7 @@ export function useCurrentUserRole(): UserRole {
       }
     }
 
-    fetchRole();
+    fetchRoles();
   }, []);
 
   return role;
