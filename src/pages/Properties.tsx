@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Bed, Bath, Square, Heart, DollarSign, ArrowUpDown } from "lucide-react";
-import { US_STATES, COUNTRIES } from "@/lib/locations";
+import { MapPin, Bed, Bath, Square, Heart, DollarSign, ArrowUpDown, Home, CheckCircle2 } from "lucide-react";
+import { CITY_OPTIONS, searchCities, formatCityDisplay, type CityOption } from "@/data/locations";
 
 interface Property {
   id: string;
@@ -30,6 +31,18 @@ interface Property {
   available_from: string | null;
   listing_source: string | null;
   created_at: string;
+  public_code: string | null;
+  furnished: boolean | null;
+  pets_allowed: boolean | null;
+  smoking_allowed: boolean | null;
+  max_occupants: number | null;
+  property_type: string | null;
+  landlord_id: string | null;
+}
+
+interface LandlordProfile {
+  id_verified: boolean | null;
+  income_verified: boolean | null;
 }
 
 const Properties = () => {
@@ -38,25 +51,58 @@ const Properties = () => {
   const [searchParams] = useSearchParams();
   
   const [properties, setProperties] = useState<Property[]>([]);
+  const [landlordVerifications, setLandlordVerifications] = useState<Record<string, LandlordProfile>>({});
   const [loading, setLoading] = useState(true);
   const [savedListings, setSavedListings] = useState<Set<string>>(new Set());
+  const [userProfile, setUserProfile] = useState<any>(null);
   
-  const [city, setCity] = useState(searchParams.get("city") || "");
-  const [state, setState] = useState(searchParams.get("state") || "");
-  const [country, setCountry] = useState(searchParams.get("country") || "US");
+  // Location with autocomplete
+  const [locationInput, setLocationInput] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState<CityOption | null>(null);
+  const [locationSuggestions, setLocationSuggestions] = useState<CityOption[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const locationRef = useRef<HTMLDivElement>(null);
+  
+  // Filters
   const [minRent, setMinRent] = useState(searchParams.get("minRent") || "");
   const [maxRent, setMaxRent] = useState(searchParams.get("maxRent") || "");
   const [bedrooms, setBedrooms] = useState(searchParams.get("bedrooms") || "");
+  const [bathrooms, setBathrooms] = useState(searchParams.get("bathrooms") || "");
+  const [propertyType, setPropertyType] = useState(searchParams.get("propertyType") || "");
+  const [furnished, setFurnished] = useState(searchParams.get("furnished") || "");
+  const [petsAllowed, setPetsAllowed] = useState(searchParams.get("petsAllowed") || "");
+  const [smokingAllowed, setSmokingAllowed] = useState(searchParams.get("smokingAllowed") || "");
   const [sortBy, setSortBy] = useState<string>("newest");
 
   useEffect(() => {
     loadUserPreferences();
     loadSavedListings();
+    
+    // Click outside handler for suggestions
+    const handleClickOutside = (event: MouseEvent) => {
+      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
     loadProperties();
-  }, [city, state, country, minRent, maxRent, bedrooms, sortBy]);
+  }, [selectedLocation, minRent, maxRent, bedrooms, bathrooms, propertyType, furnished, petsAllowed, smokingAllowed, sortBy]);
+
+  useEffect(() => {
+    if (locationInput.length >= 2) {
+      const suggestions = searchCities(locationInput);
+      setLocationSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
+    } else {
+      setLocationSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [locationInput]);
 
   const loadUserPreferences = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -67,16 +113,28 @@ const Properties = () => {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("preferred_cities, preferred_state")
+      .select("*")
       .eq("id", session.user.id)
       .single();
 
     if (profile) {
+      setUserProfile(profile);
+      
+      // Pre-fill location from preferences
       if (!searchParams.get("city") && profile.preferred_cities && Array.isArray(profile.preferred_cities) && profile.preferred_cities.length > 0) {
-        setCity(profile.preferred_cities[0]);
-      }
-      if (!searchParams.get("state") && profile.preferred_state) {
-        setState(profile.preferred_state);
+        const prefCity = profile.preferred_cities[0];
+        const prefState = profile.preferred_state || "";
+        
+        // Find matching city in our data
+        const matchedCity = CITY_OPTIONS.find(
+          c => c.city.toLowerCase() === prefCity.toLowerCase() && 
+               c.stateCode === prefState
+        );
+        
+        if (matchedCity) {
+          setSelectedLocation(matchedCity);
+          setLocationInput(formatCityDisplay(matchedCity));
+        }
       }
     }
     
@@ -105,44 +163,105 @@ const Properties = () => {
         .select("*")
         .eq("is_active", true);
 
-      if (city) {
-        query = query.ilike("city", `%${city}%`);
+      // Location filters
+      if (selectedLocation) {
+        query = query
+          .eq("city", selectedLocation.city)
+          .eq("state", selectedLocation.stateCode)
+          .eq("country", selectedLocation.country);
       }
-      if (state && state !== "any") {
-        query = query.eq("state", state);
-      }
-      if (country && country !== "any") {
-        query = query.eq("country", country);
-      }
+      
+      // Rent filters
       if (minRent) {
         query = query.gte("rent_amount", parseInt(minRent));
       }
       if (maxRent) {
         query = query.lte("rent_amount", parseInt(maxRent));
       }
+      
+      // Bedrooms
       if (bedrooms && bedrooms !== "any") {
-        query = query.gte("total_bedrooms", parseInt(bedrooms));
+        const bedroomCount = parseInt(bedrooms);
+        if (bedroomCount === 0) {
+          query = query.or("total_bedrooms.eq.0,total_bedrooms.is.null");
+        } else {
+          query = query.gte("total_bedrooms", bedroomCount);
+        }
+      }
+      
+      // Bathrooms
+      if (bathrooms && bathrooms !== "any") {
+        query = query.gte("total_bathrooms", parseFloat(bathrooms));
+      }
+      
+      // Property type
+      if (propertyType && propertyType !== "any") {
+        query = query.eq("property_type", propertyType);
+      }
+      
+      // Boolean filters
+      if (furnished && furnished !== "any") {
+        query = query.eq("furnished", furnished === "yes");
+      }
+      if (petsAllowed && petsAllowed !== "any") {
+        query = query.eq("pets_allowed", petsAllowed === "yes");
+      }
+      if (smokingAllowed && smokingAllowed !== "any") {
+        query = query.eq("smoking_allowed", smokingAllowed === "yes");
       }
 
-      // Apply sorting
-      switch (sortBy) {
-        case "price-asc":
-          query = query.order("rent_amount", { ascending: true });
-          break;
-        case "price-desc":
-          query = query.order("rent_amount", { ascending: false });
-          break;
-        case "newest":
-          query = query.order("created_at", { ascending: false });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
+      // Apply sorting - fetch all for best match, otherwise sort in DB
+      if (sortBy === "best-match" && userProfile) {
+        query = query.order("created_at", { ascending: false });
+      } else {
+        switch (sortBy) {
+          case "price-asc":
+            query = query.order("rent_amount", { ascending: true });
+            break;
+          case "price-desc":
+            query = query.order("rent_amount", { ascending: false });
+            break;
+          case "newest":
+          default:
+            query = query.order("created_at", { ascending: false });
+        }
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
-      setProperties(data || []);
+      
+      let processedData = data || [];
+      
+      // Best match scoring (client-side)
+      if (sortBy === "best-match" && userProfile && processedData.length > 0) {
+        processedData = processedData.map(property => ({
+          ...property,
+          matchScore: calculateMatchScore(property, userProfile)
+        })).sort((a: any, b: any) => (b.matchScore || 0) - (a.matchScore || 0));
+      }
+      
+      setProperties(processedData);
+      
+      // Load landlord verifications
+      const landlordIds = [...new Set(processedData.map(p => p.landlord_id).filter(Boolean))];
+      if (landlordIds.length > 0) {
+        const { data: landlordData } = await supabase
+          .from("profiles")
+          .select("id, id_verified, income_verified")
+          .in("id", landlordIds);
+        
+        if (landlordData) {
+          const verificationsMap: Record<string, LandlordProfile> = {};
+          landlordData.forEach(l => {
+            verificationsMap[l.id] = {
+              id_verified: l.id_verified,
+              income_verified: l.income_verified
+            };
+          });
+          setLandlordVerifications(verificationsMap);
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -154,8 +273,68 @@ const Properties = () => {
     }
   };
 
-  const handleSearch = () => {
-    loadProperties();
+  const calculateMatchScore = (property: Property, profile: any): number => {
+    let score = 0;
+    
+    // Location match (30 points)
+    if (profile.preferred_cities && Array.isArray(profile.preferred_cities)) {
+      if (profile.preferred_cities.some((c: string) => c.toLowerCase() === property.city.toLowerCase())) {
+        score += 20;
+      }
+    }
+    if (profile.preferred_state && property.state === profile.preferred_state) {
+      score += 10;
+    }
+    
+    // Budget match (40 points)
+    if (profile.budget_max) {
+      const rentAmount = property.rent_total || property.rent_amount;
+      const budgetDiff = Math.abs(rentAmount - profile.budget_max);
+      const budgetRatio = budgetDiff / profile.budget_max;
+      
+      if (rentAmount <= profile.budget_max) {
+        score += 40 - Math.min(40, budgetRatio * 100);
+      } else if (rentAmount <= profile.budget_max * 1.1) {
+        score += 20;
+      }
+    }
+    
+    // Availability timing (20 points)
+    if (profile.move_in_date && property.available_from) {
+      const targetDate = new Date(profile.move_in_date);
+      const availableDate = new Date(property.available_from);
+      const daysDiff = Math.abs((targetDate.getTime() - availableDate.getTime()) / (1000 * 3600 * 24));
+      
+      if (daysDiff <= 30) {
+        score += 20;
+      } else if (daysDiff <= 60) {
+        score += 10;
+      }
+    }
+    
+    // Preferences match (10 points)
+    if (profile.pets === "yes" && property.pets_allowed) score += 5;
+    if (profile.smoking === "yes" && property.smoking_allowed) score += 5;
+    
+    return score;
+  };
+
+  const handleLocationSelect = (city: CityOption) => {
+    setSelectedLocation(city);
+    setLocationInput(formatCityDisplay(city));
+    setShowSuggestions(false);
+  };
+
+  const clearLocation = () => {
+    setSelectedLocation(null);
+    setLocationInput("");
+    setLocationSuggestions([]);
+  };
+
+  const isLandlordVerified = (landlordId: string | null): boolean => {
+    if (!landlordId) return false;
+    const verification = landlordVerifications[landlordId];
+    return verification?.id_verified === true && verification?.income_verified === true;
   };
 
   const toggleSave = async (propertyId: string) => {
@@ -247,51 +426,53 @@ const Properties = () => {
         {/* Filter Bar with subtle texture */}
         <Card className="mb-8 shadow-hover bg-texture animate-scale-in">
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Location Autocomplete */}
+              <div className="space-y-2 relative" ref={locationRef}>
                 <label className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  City
+                  Location
                 </label>
-                <Input
-                  placeholder="New Haven"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="transition-fast hover:border-primary"
-                />
+                <div className="relative">
+                  <Input
+                    placeholder="Search city (e.g. New York, NY)"
+                    value={locationInput}
+                    onChange={(e) => setLocationInput(e.target.value)}
+                    onFocus={() => locationInput.length >= 2 && setShowSuggestions(true)}
+                    className="transition-fast hover:border-primary"
+                  />
+                  {selectedLocation && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1 h-7 w-7 p-0"
+                      onClick={clearLocation}
+                    >
+                      ×
+                    </Button>
+                  )}
+                </div>
+                {showSuggestions && locationSuggestions.length > 0 && (
+                  <Card className="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto">
+                    <CardContent className="p-2">
+                      {locationSuggestions.map((city, idx) => (
+                        <button
+                          key={idx}
+                          className="w-full text-left px-3 py-2 hover:bg-muted rounded-sm transition-fast text-sm"
+                          onClick={() => handleLocationSelect(city)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-3 w-3 text-muted-foreground" />
+                            <span>{formatCityDisplay(city)}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Country</label>
-                <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px] overflow-y-auto">
-                    <SelectItem value="any">Any Country</SelectItem>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c.code} value={c.code}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">State</label>
-                <Select value={state} onValueChange={setState} disabled={country !== "US"}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px] overflow-y-auto">
-                    <SelectItem value="any">Any State</SelectItem>
-                    {US_STATES.map((s) => (
-                      <SelectItem key={s.code} value={s.code}>
-                        {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+
+              {/* Min Rent */}
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
@@ -305,6 +486,8 @@ const Properties = () => {
                   className="transition-fast hover:border-primary"
                 />
               </div>
+
+              {/* Max Rent */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Max Rent</label>
                 <Input
@@ -315,6 +498,8 @@ const Properties = () => {
                   className="transition-fast hover:border-primary"
                 />
               </div>
+
+              {/* Bedrooms */}
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Bed className="h-4 w-4" />
@@ -326,6 +511,7 @@ const Properties = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="0">Studio (0)</SelectItem>
                     <SelectItem value="1">1+</SelectItem>
                     <SelectItem value="2">2+</SelectItem>
                     <SelectItem value="3">3+</SelectItem>
@@ -333,9 +519,82 @@ const Properties = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Bathrooms */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Bath className="h-4 w-4" />
+                  Bathrooms
+                </label>
+                <Select value={bathrooms} onValueChange={setBathrooms}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="1">1+</SelectItem>
+                    <SelectItem value="1.5">1.5+</SelectItem>
+                    <SelectItem value="2">2+</SelectItem>
+                    <SelectItem value="2.5">2.5+</SelectItem>
+                    <SelectItem value="3">3+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Property Type */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Home className="h-4 w-4" />
+                  Type
+                </label>
+                <Select value={propertyType} onValueChange={setPropertyType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="house">House</SelectItem>
+                    <SelectItem value="condo">Condo</SelectItem>
+                    <SelectItem value="room">Room</SelectItem>
+                    <SelectItem value="townhouse">Townhouse</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Furnished */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Furnished</label>
+                <Select value={furnished} onValueChange={setFurnished}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Pets Allowed */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Pets Allowed</label>
+                <Select value={petsAllowed} onValueChange={setPetsAllowed}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
-            <div className="flex items-center gap-4 mt-4">
+            {/* Sort */}
+            <div className="flex items-center gap-4 mt-6">
               <div className="flex-1">
                 <label className="text-sm font-medium flex items-center gap-2 mb-2">
                   <ArrowUpDown className="h-4 w-4" />
@@ -349,12 +608,10 @@ const Properties = () => {
                     <SelectItem value="newest">Newest First</SelectItem>
                     <SelectItem value="price-asc">Price: Low to High</SelectItem>
                     <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                    {userProfile && <SelectItem value="best-match">Best Match for You</SelectItem>}
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="mt-6 px-8" onClick={handleSearch}>
-                Search
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -403,10 +660,11 @@ const Properties = () => {
                   <div className="text-2xl font-bold text-primary mb-4">
                     ${(property.rent_total || property.rent_amount).toLocaleString()} / month
                   </div>
+                  
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                     <span className="flex items-center gap-1">
                       <Bed className="h-4 w-4" />
-                      {property.total_bedrooms} bed
+                      {property.total_bedrooms === 0 ? "Studio" : `${property.total_bedrooms} bed`}
                     </span>
                     <span className="flex items-center gap-1">
                       <Bath className="h-4 w-4" />
@@ -419,6 +677,39 @@ const Properties = () => {
                       </span>
                     )}
                   </div>
+                  
+                  {/* Property Features */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {property.furnished && (
+                      <Badge variant="secondary" className="text-xs">
+                        Furnished
+                      </Badge>
+                    )}
+                    {property.pets_allowed && (
+                      <Badge variant="secondary" className="text-xs">
+                        Pets OK
+                      </Badge>
+                    )}
+                    {property.smoking_allowed && (
+                      <Badge variant="secondary" className="text-xs">
+                        Smoking OK
+                      </Badge>
+                    )}
+                    {property.landlord_id && isLandlordVerified(property.landlord_id) && (
+                      <Badge className="text-xs bg-primary/10 text-primary hover:bg-primary/20">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Verified Landlord
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* Listing ID */}
+                  {property.public_code && (
+                    <div className="text-xs text-muted-foreground mb-2">
+                      ID: {property.public_code}
+                    </div>
+                  )}
+                  
                   {property.amenities && property.amenities.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {property.amenities.slice(0, 3).map((amenity, idx) => (
