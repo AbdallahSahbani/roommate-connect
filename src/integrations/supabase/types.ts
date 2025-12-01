@@ -583,6 +583,8 @@ export type Database = {
           phone: string | null
           phone_verified: boolean | null
           preferred_cities: string[] | null
+          preferred_city: string | null
+          preferred_country: string | null
           preferred_state: string | null
           profile_photo_url: string | null
           role: string | null
@@ -627,6 +629,8 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           preferred_cities?: string[] | null
+          preferred_city?: string | null
+          preferred_country?: string | null
           preferred_state?: string | null
           profile_photo_url?: string | null
           role?: string | null
@@ -671,6 +675,8 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           preferred_cities?: string[] | null
+          preferred_city?: string | null
+          preferred_country?: string | null
           preferred_state?: string | null
           profile_photo_url?: string | null
           role?: string | null
@@ -694,6 +700,7 @@ export type Database = {
           amenities: string[] | null
           available_from: string | null
           available_rooms: number
+          bathrooms: number | null
           bedrooms: number | null
           city: string
           country: string | null
@@ -749,6 +756,7 @@ export type Database = {
           amenities?: string[] | null
           available_from?: string | null
           available_rooms: number
+          bathrooms?: number | null
           bedrooms?: number | null
           city: string
           country?: string | null
@@ -804,6 +812,7 @@ export type Database = {
           amenities?: string[] | null
           available_from?: string | null
           available_rooms?: number
+          bathrooms?: number | null
           bedrooms?: number | null
           city?: string
           country?: string | null
@@ -1028,6 +1037,36 @@ export type Database = {
         }
         Relationships: []
       }
+      system_logs: {
+        Row: {
+          action: string | null
+          actor_user_id: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action?: string | null
+          actor_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string | null
+          actor_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1174,6 +1213,7 @@ export type Database = {
     }
     Functions: {
       generate_property_code: { Args: { state_abbr: string }; Returns: string }
+      generate_public_code: { Args: { _state: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

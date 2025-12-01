@@ -184,4 +184,28 @@ All colors MUST be HSL.
     position: relative;
     z-index: 1;
   }
+  
+  .bg-glass {
+    position: relative;
+    background: hsl(0 0% 100%);
+    isolation: isolate;
+  }
+  
+  .bg-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/textures/glass-texture.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+  }
+  
+  .bg-glass > * {
+    position: relative;
+    z-index: 1;
+  }
 }
