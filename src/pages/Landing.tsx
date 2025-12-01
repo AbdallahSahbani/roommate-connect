@@ -125,7 +125,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             Why Choose Roomates?
@@ -140,7 +140,7 @@ const Landing = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             How It Works
@@ -154,7 +154,7 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-4 text-foreground">
             Ready to Live Bigger with Less?
