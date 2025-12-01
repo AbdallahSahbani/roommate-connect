@@ -18,7 +18,6 @@ import Messages from "./pages/Messages";
 import Verification from "./pages/Verification";
 import Subscription from "./pages/Subscription";
 import IncomeVerification from "./pages/IncomeVerification";
-import AdminDashboard from "./pages/AdminDashboard";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 import Board from "./pages/Board";
@@ -27,9 +26,11 @@ import LandlordDashboard from "./pages/landlord/LandlordDashboard";
 import LandlordListingsPage from "./pages/landlord/LandlordListings";
 import RoommateSwipe from "./pages/RoommateSwipe";
 import Subscribe from "./pages/Subscribe";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminVerifications from "./pages/admin/AdminVerifications";
 import AdminLogs from "./pages/admin/AdminLogs";
+import AdminProperties from "./pages/admin/AdminProperties";
 import LandlordApplications from "./pages/landlord/LandlordApplications";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/verifications" element={<ProtectedRoute requireAdmin><AdminVerifications /></ProtectedRoute>} />
           <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
+          <Route path="/admin/properties" element={<ProtectedRoute requireAdmin><AdminProperties /></ProtectedRoute>} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/board" element={<Board />} />
