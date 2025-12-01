@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { 
@@ -58,6 +59,9 @@ const PropertyDetail = () => {
   const [eligibilityReasons, setEligibilityReasons] = useState<string[]>([]);
   const [applying, setApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const [userGroups, setUserGroups] = useState<any[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [showGroupDialog, setShowGroupDialog] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -65,8 +69,24 @@ const PropertyDetail = () => {
       checkIfSaved();
       loadApprovedCount();
       checkIfApplied();
+      loadUserGroups();
     }
   }, [id]);
+
+  const loadUserGroups = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data } = await supabase
+      .from("group_members")
+      .select("group_id, groups(*)")
+      .eq("user_id", session.user.id)
+      .eq("status", "active");
+
+    if (data) {
+      setUserGroups(data.map(gm => gm.groups).filter(Boolean));
+    }
+  };
 
   const loadApprovedCount = async () => {
     if (!id) return;
@@ -183,11 +203,22 @@ const PropertyDetail = () => {
       return;
     }
 
-    if (!property) return;
+    // If user has groups, show dialog to choose
+    if (userGroups.length > 0) {
+      setShowGroupDialog(true);
+      return;
+    }
+
+    // Otherwise apply as individual
+    applyAsIndividual();
+  };
+
+  const applyAsIndividual = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !property) return;
 
     setApplying(true);
     try {
-      // Check if already applied
       const { data: existingApp } = await checkExistingApplication(id!, session.user.id);
       if (existingApp) {
         toast({
@@ -199,14 +230,12 @@ const PropertyDetail = () => {
         return;
       }
 
-      // Get user profile
       const { data: profile } = await supabase
         .from("profiles")
         .select("id_verified, income_verified, background_check_status, self_reported_monthly_income")
         .eq("id", session.user.id)
         .single();
 
-      // Check eligibility
       const eligibility = checkEligibility(profile, property, approvedCount);
 
       if (!eligibility.canApply) {
@@ -216,14 +245,23 @@ const PropertyDetail = () => {
         return;
       }
 
-      // Create application
-      const { error } = await createApplication(id!, session.user.id, eligibility.flags);
+      const { error } = await supabase
+        .from("applications")
+        .insert({
+          property_id: id!,
+          applicant_id: session.user.id,
+          meets_background: true,
+          meets_capacity: true,
+          meets_income: true,
+          meets_verification: true,
+          status: "pending",
+        });
 
       if (error) throw error;
 
       toast({
         title: "Application Submitted",
-        description: "Your application has been sent to the landlord. You'll see updates in Messages.",
+        description: "Your application has been sent to the landlord.",
       });
       setHasApplied(true);
       loadApprovedCount();
@@ -235,6 +273,99 @@ const PropertyDetail = () => {
       });
     } finally {
       setApplying(false);
+      setShowGroupDialog(false);
+    }
+  };
+
+  const applyAsGroup = async () => {
+    if (!selectedGroupId || !property) return;
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    setApplying(true);
+    try {
+      // Get group members with profiles
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("user_id, profiles(*)")
+        .eq("group_id", selectedGroupId)
+        .eq("status", "active");
+
+      if (!members || members.length === 0) {
+        throw new Error("No group members found");
+      }
+
+      // Check group size vs max occupants
+      if (property.max_occupants && members.length > property.max_occupants) {
+        toast({
+          title: "Group Too Large",
+          description: `This property allows max ${property.max_occupants} occupants, but your group has ${members.length} members.`,
+          variant: "destructive",
+        });
+        setApplying(false);
+        return;
+      }
+
+      // Check combined income
+      const totalIncome = members.reduce((sum, m: any) => {
+        return sum + (m.profiles?.self_reported_monthly_income || 0);
+      }, 0) * 12;
+
+      if (property.min_household_income && totalIncome < property.min_household_income) {
+        toast({
+          title: "Insufficient Income",
+          description: `This property requires $${property.min_household_income.toLocaleString()} annual household income. Your group's verified income is $${totalIncome.toLocaleString()}.`,
+          variant: "destructive",
+        });
+        setApplying(false);
+        return;
+      }
+
+      // Check all members are verified
+      const allVerified = members.every((m: any) => 
+        m.profiles?.id_verified && m.profiles?.income_verified
+      );
+
+      if (!allVerified) {
+        toast({
+          title: "Incomplete Verification",
+          description: "All group members must be ID and income verified to apply.",
+          variant: "destructive",
+        });
+        setApplying(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from("applications")
+        .insert({
+          property_id: id!,
+          applicant_id: session.user.id,
+          meets_background: allVerified,
+          meets_capacity: true,
+          meets_income: true,
+          meets_verification: allVerified,
+          status: "pending",
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Group Application Submitted",
+        description: "Your group application has been sent to the landlord.",
+      });
+      setHasApplied(true);
+      loadApprovedCount();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setApplying(false);
+      setShowGroupDialog(false);
     }
   };
 
@@ -539,6 +670,58 @@ const PropertyDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Group Application Dialog */}
+      <AlertDialog open={showGroupDialog} onOpenChange={setShowGroupDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apply as Individual or Group?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You can apply to this property on your own or with a group.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-4">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={applyAsIndividual}
+              disabled={applying}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Apply as Individual
+            </Button>
+            
+            {userGroups.length > 0 && (
+              <div className="space-y-2">
+                <Label>Or select a group:</Label>
+                {userGroups.map((group: any) => (
+                  <Button
+                    key={group.id}
+                    variant={selectedGroupId === group.id ? "default" : "outline"}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedGroupId(group.id)}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    {group.name || "Unnamed Group"}
+                  </Button>
+                ))}
+                <Button
+                  className="w-full"
+                  onClick={applyAsGroup}
+                  disabled={!selectedGroupId || applying}
+                >
+                  {applying ? "Submitting..." : "Apply with Selected Group"}
+                </Button>
+              </div>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <Button variant="ghost" onClick={() => setShowGroupDialog(false)}>
+              Cancel
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Eligibility Dialog */}
       <AlertDialog open={showEligibilityDialog} onOpenChange={setShowEligibilityDialog}>
