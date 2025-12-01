@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import nycSkyline from "@/assets/nyc-skyline.png";
+import { useState, useMemo } from "react";
+import { CityHero } from "@/components/CityHero";
 const Landing = () => {
   const navigate = useNavigate();
   const [searchCity, setSearchCity] = useState("");
@@ -24,18 +24,29 @@ const Landing = () => {
       handleSearch();
     }
   };
+
+  // Determine city key based on search inputs
+  const cityKey = useMemo(() => {
+    const city = searchCity.toLowerCase();
+    const suburbKeywords = ["farmington", "new haven", "woodland", "suburb"];
+    
+    if (city.includes("new york") || city.includes("nyc")) {
+      return "nyc" as const;
+    }
+    if (suburbKeywords.some(keyword => city.includes(keyword))) {
+      return "suburban" as const;
+    }
+    if (city && city !== "new york" && city !== "nyc") {
+      return "downtown" as const;
+    }
+    return "nyc" as const;
+  }, [searchCity]);
+
   return <div className="min-h-screen relative">
       {/* Hero Section with Search */}
-      <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 min-h-[700px] flex items-center">
-        <div className="absolute inset-0 z-0" style={{
-        backgroundImage: `url(${nycSkyline})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
-        </div>
-        <div className="mx-auto max-w-7xl relative z-10 w-full">
+      <div className="py-20 px-4 sm:px-6 lg:px-8">
+        <CityHero cityKey={cityKey}>
+          <div className="mx-auto max-w-7xl w-full">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl drop-shadow-lg font-serif text-[#a2a2a2] md:text-7xl">
               Roomates
@@ -121,8 +132,9 @@ const Landing = () => {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+          </div>
+        </CityHero>
+      </div>
 
       {/* Features Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
