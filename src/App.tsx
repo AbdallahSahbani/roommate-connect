@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
@@ -10,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Browse from "./pages/Browse";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
+import Groups from "./pages/Groups";
 import LandlordListings from "./pages/LandlordListings";
 import LandlordListingForm from "./pages/LandlordListingForm";
 import Messages from "./pages/Messages";
@@ -41,26 +43,27 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/profile-setup" element={<ProfileSetup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
-          <Route path="/landlord/dashboard" element={<LandlordDashboard />} />
-          <Route path="/landlord/listings" element={<LandlordListingsPage />} />
-          <Route path="/landlord/listings/new" element={<LandlordListingForm />} />
-          <Route path="/landlord/listings/:id/edit" element={<LandlordListingForm />} />
-          <Route path="/landlord/applications" element={<LandlordApplications />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/verification" element={<Verification />} />
-          <Route path="/subscription" element={<Subscription />} />
-          <Route path="/income-verification" element={<IncomeVerification />} />
-          <Route path="/roommates/swipe" element={<RoommateSwipe />} />
-          <Route path="/subscribe" element={<Subscribe />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/verifications" element={<AdminVerifications />} />
-          <Route path="/admin/logs" element={<AdminLogs />} />
+          <Route path="/groups" element={<ProtectedRoute requireRenter><Groups /></ProtectedRoute>} />
+          <Route path="/landlord/dashboard" element={<ProtectedRoute requireLandlord><LandlordDashboard /></ProtectedRoute>} />
+          <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
+          <Route path="/landlord/listings/new" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
+          <Route path="/landlord/listings/:id/edit" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
+          <Route path="/landlord/applications" element={<ProtectedRoute requireLandlord><LandlordApplications /></ProtectedRoute>} />
+          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
+          <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+          <Route path="/income-verification" element={<ProtectedRoute><IncomeVerification /></ProtectedRoute>} />
+          <Route path="/roommates/swipe" element={<ProtectedRoute requireRenter><RoommateSwipe /></ProtectedRoute>} />
+          <Route path="/subscribe" element={<ProtectedRoute><Subscribe /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
+          <Route path="/admin/verifications" element={<ProtectedRoute requireAdmin><AdminVerifications /></ProtectedRoute>} />
+          <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/board" element={<Board />} />
