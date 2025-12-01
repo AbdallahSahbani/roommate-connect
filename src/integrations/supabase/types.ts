@@ -1136,7 +1136,7 @@ export type Database = {
           budget_min: number | null
           cleanliness_level: number | null
           created_at: string | null
-          full_name: string | null
+          first_name: string | null
           guest_frequency: string | null
           id: string | null
           id_verified: boolean | null
@@ -1163,7 +1163,7 @@ export type Database = {
           budget_min?: number | null
           cleanliness_level?: number | null
           created_at?: string | null
-          full_name?: string | null
+          first_name?: never
           guest_frequency?: string | null
           id?: string | null
           id_verified?: boolean | null
@@ -1190,7 +1190,7 @@ export type Database = {
           budget_min?: number | null
           cleanliness_level?: number | null
           created_at?: string | null
-          full_name?: string | null
+          first_name?: never
           guest_frequency?: string | null
           id?: string | null
           id_verified?: boolean | null
