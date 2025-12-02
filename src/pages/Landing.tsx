@@ -5,7 +5,7 @@ import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } 
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import sfSkyline from "@/assets/sf-skyline.jpg";
-import roommatesAd from "@/assets/roommates-ad.png";
+import roommatesCta from "@/assets/roommates-cta.png";
 import oceanTexture from "@/assets/ocean-texture.jpg";
 
 const Landing = () => {
@@ -191,10 +191,10 @@ const Landing = () => {
           </div>
           
           {/* Ad Card - Half Size */}
-          <div className="max-w-md mx-auto mb-8">
+          <div className="max-w-md mx-auto">
             <div className="bg-card rounded-xl overflow-hidden shadow-card border hover:shadow-glow transition-all duration-300">
               <img 
-                src={roommatesAd} 
+                src={roommatesCta} 
                 alt="Roomates - Live bigger, pay less with verified roommates" 
                 className="w-full h-auto"
               />
@@ -209,14 +209,6 @@ const Landing = () => {
                 </Link>
               </div>
             </div>
-          </div>
-          
-          <div className="text-center">
-            <Link to="/auth">
-              <Button size="lg" className="shadow-hover">
-                Start Your Search Today
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
