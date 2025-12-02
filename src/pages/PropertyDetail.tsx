@@ -208,140 +208,6 @@ const PropertyDetail = () => {
     }
   };
 
-
-      const eligibility = checkEligibility(profile, property, approvedCount);
-
-      if (!eligibility.canApply) {
-        setEligibilityReasons(eligibility.reasons);
-        setShowEligibilityDialog(true);
-        setApplying(false);
-        return;
-      }
-
-      const { error } = await supabase
-        .from("applications")
-        .insert({
-          property_id: id!,
-          applicant_id: session.user.id,
-          meets_background: true,
-          meets_capacity: true,
-          meets_income: true,
-          meets_verification: true,
-          status: "pending",
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Application Submitted",
-        description: "Your application has been sent to the landlord.",
-      });
-      setHasApplied(true);
-      loadApprovedCount();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setApplying(false);
-      setShowGroupDialog(false);
-    }
-  };
-
-  const applyAsGroup = async () => {
-    if (!selectedGroupId || !property) return;
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    setApplying(true);
-    try {
-      // Get group members with profiles
-      const { data: members } = await supabase
-        .from("group_members")
-        .select("user_id, profiles(*)")
-        .eq("group_id", selectedGroupId)
-        .eq("status", "active");
-
-      if (!members || members.length === 0) {
-        throw new Error("No group members found");
-      }
-
-      // Check group size vs max occupants
-      if (property.max_occupants && members.length > property.max_occupants) {
-        toast({
-          title: "Group Too Large",
-          description: `This property allows max ${property.max_occupants} occupants, but your group has ${members.length} members.`,
-          variant: "destructive",
-        });
-        setApplying(false);
-        return;
-      }
-
-      // Check combined income
-      const totalIncome = members.reduce((sum, m: any) => {
-        return sum + (m.profiles?.self_reported_monthly_income || 0);
-      }, 0) * 12;
-
-      if (property.min_household_income && totalIncome < property.min_household_income) {
-        toast({
-          title: "Insufficient Income",
-          description: `This property requires $${property.min_household_income.toLocaleString()} annual household income. Your group's verified income is $${totalIncome.toLocaleString()}.`,
-          variant: "destructive",
-        });
-        setApplying(false);
-        return;
-      }
-
-      // Check all members are verified
-      const allVerified = members.every((m: any) => 
-        m.profiles?.id_verified && m.profiles?.income_verified
-      );
-
-      if (!allVerified) {
-        toast({
-          title: "Incomplete Verification",
-          description: "All group members must be ID and income verified to apply.",
-          variant: "destructive",
-        });
-        setApplying(false);
-        return;
-      }
-
-      const { error } = await supabase
-        .from("applications")
-        .insert({
-          property_id: id!,
-          applicant_id: session.user.id,
-          meets_background: allVerified,
-          meets_capacity: true,
-          meets_income: true,
-          meets_verification: allVerified,
-          status: "pending",
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Group Application Submitted",
-        description: "Your group application has been sent to the landlord.",
-      });
-      setHasApplied(true);
-      loadApprovedCount();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setApplying(false);
-      setShowGroupDialog(false);
-    }
-  };
-
   const sendInquiry = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
@@ -609,17 +475,17 @@ const PropertyDetail = () => {
                  <div className="space-y-3">
                    {!showApplicationForm ? (
                      <>
-                       <Button 
-                         className="w-full" 
-                         style={{ backgroundColor: '#5B1020' }}
-                         onClick={() => {
-                           const { data: { session } } = supabase.auth.getSession();
-                           if (!session) {
-                             navigate("/auth");
-                             return;
-                           }
-                           setShowApplicationForm(true);
-                         }}
+                        <Button 
+                          className="w-full" 
+                          style={{ backgroundColor: '#5B1020' }}
+                          onClick={async () => {
+                            const { data: { session } } = await supabase.auth.getSession();
+                            if (!session) {
+                              navigate("/auth");
+                              return;
+                            }
+                            setShowApplicationForm(true);
+                          }}
                          disabled={hasApplied || (property.total_slots != null && (property.filled_slots || 0) >= property.total_slots)}
                        >
                          {hasApplied ? "Already Applied" : (property.total_slots != null && (property.filled_slots || 0) >= property.total_slots) ? "Waitlist Only" : "Apply for this Property"}
@@ -678,86 +544,6 @@ const PropertyDetail = () => {
           </div>
         </div>
       </div>
-
-      {/* Group Application Dialog */}
-      <AlertDialog open={showGroupDialog} onOpenChange={setShowGroupDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Apply as Individual or Group?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You can apply to this property on your own or with a group.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="space-y-4 py-4">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={applyAsIndividual}
-              disabled={applying}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Apply as Individual
-            </Button>
-            
-            {userGroups.length > 0 && (
-              <div className="space-y-2">
-                <Label>Or select a group:</Label>
-                {userGroups.map((group: any) => (
-                  <Button
-                    key={group.id}
-                    variant={selectedGroupId === group.id ? "default" : "outline"}
-                    className="w-full justify-start"
-                    onClick={() => setSelectedGroupId(group.id)}
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    {group.name || "Unnamed Group"}
-                  </Button>
-                ))}
-                <Button
-                  className="w-full"
-                  onClick={applyAsGroup}
-                  disabled={!selectedGroupId || applying}
-                >
-                  {applying ? "Submitting..." : "Apply with Selected Group"}
-                </Button>
-              </div>
-            )}
-          </div>
-          <AlertDialogFooter>
-            <Button variant="ghost" onClick={() => setShowGroupDialog(false)}>
-              Cancel
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Eligibility Dialog */}
-      <AlertDialog open={showEligibilityDialog} onOpenChange={setShowEligibilityDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Can't Apply Yet</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-3">
-              <p>You don't meet the following requirements:</p>
-              <ul className="list-disc pl-5 space-y-2">
-                {eligibilityReasons.map((reason, idx) => (
-                  <li key={idx}>{reason}</li>
-                ))}
-              </ul>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <Button variant="outline" onClick={() => setShowEligibilityDialog(false)}>
-              Close
-            </Button>
-            <Button onClick={() => {
-              setShowEligibilityDialog(false);
-              navigate("/verification");
-            }}>
-              Go to Verification Center
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
