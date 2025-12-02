@@ -59,7 +59,13 @@ export default function Board() {
               <Card key={index} className={`p-6 ${member.vacant ? 'opacity-60' : ''}`}>
                 <div className="flex flex-col items-center text-center">
                   <Avatar className="h-20 w-20 mb-4">
-                    {member.photo && <AvatarImage src={member.photo} alt={member.name} />}
+                    {member.photo && (
+                      <AvatarImage
+                        src={member.photo}
+                        alt={member.name}
+                        className="object-cover object-[60%_40%]"
+                      />
+                    )}
                     <AvatarFallback className={member.vacant ? 'bg-muted' : 'bg-primary text-primary-foreground'}>
                       {member.initials}
                     </AvatarFallback>
