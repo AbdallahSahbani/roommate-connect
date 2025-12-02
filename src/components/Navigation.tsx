@@ -32,7 +32,7 @@ export const Navigation = () => {
             <img 
               src={logo} 
               alt="Roomates Logo" 
-              className="h-10 w-10 group-hover:scale-110 transition-bounce filter drop-shadow-md" 
+              className="h-10 w-auto group-hover:scale-110 transition-bounce filter drop-shadow-md object-contain" 
             />
             <span className="font-bold text-xl text-primary-foreground">Roomates</span>
           </Link>
