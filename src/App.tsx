@@ -32,6 +32,7 @@ import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProperties from "./pages/admin/AdminProperties";
 import LandlordApplications from "./pages/landlord/LandlordApplications";
 import LandlordAssistant from "./pages/landlord/LandlordAssistant";
+import BecomeLandlord from "./pages/BecomeLandlord";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 
@@ -51,6 +52,7 @@ const App = () => (
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetail />} />
         <Route path="/groups" element={<ProtectedRoute requireRenter><Groups /></ProtectedRoute>} />
+        <Route path="/become-landlord" element={<BecomeLandlord />} />
         <Route path="/landlord/dashboard" element={<ProtectedRoute requireLandlord><LandlordDashboard /></ProtectedRoute>} />
         <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
         <Route path="/landlord/assistant" element={<ProtectedRoute requireLandlord><LandlordAssistant /></ProtectedRoute>} />
