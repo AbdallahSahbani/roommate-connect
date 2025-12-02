@@ -69,6 +69,43 @@ const LandlordListingForm = () => {
   useEffect(() => {
     if (id) {
       loadProperty();
+    } else {
+      // Check for draft listing from AI assistant
+      const draft = sessionStorage.getItem("draftListing");
+      if (draft) {
+        try {
+          const draftData = JSON.parse(draft);
+          setForm({
+            title: draftData.title || "",
+            description: draftData.description || "",
+            street_address: draftData.address?.split(',')[0] || "",
+            city: draftData.city || "",
+            state: draftData.state || "",
+            postal_code: draftData.postal_code || "",
+            rent_total: Number(draftData.rent) || 0,
+            bedrooms: Number(draftData.bedrooms) || 1,
+            bathrooms: Number(draftData.bathrooms) || 1,
+            square_feet: Number(draftData.sqft) || 0,
+            min_household_income: Number(draftData.screening_requirements?.min_income) || 0,
+            max_occupants: Number(draftData.max_occupants) || 2,
+            available_from: draftData.availability_date || "",
+            property_type: draftData.property_type || "apartment",
+            furnished: draftData.furnished || false,
+            pets_allowed: draftData.pet_policy?.allowed || false,
+            smoking_allowed: draftData.smoking_allowed || false,
+            utilities_included: Array.isArray(draftData.utilities_included) && draftData.utilities_included.length > 0,
+            parking: draftData.parking?.type || "none",
+            photos: Array.isArray(draftData.photos) ? draftData.photos : [],
+          });
+          sessionStorage.removeItem("draftListing");
+          toast({
+            title: "Draft loaded",
+            description: "AI assistant draft has been loaded. Review and save when ready.",
+          });
+        } catch (e) {
+          console.error("Failed to load draft:", e);
+        }
+      }
     }
   }, [id]);
 
