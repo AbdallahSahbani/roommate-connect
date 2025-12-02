@@ -106,12 +106,15 @@ export default function LandlordDashboard() {
 
           <Card className="p-6 bg-texture">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button variant="outline" onClick={() => navigate("/landlord/listings")} className="justify-start">
-                View All Listings
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button variant="outline" onClick={() => navigate("/landlord/assistant")} className="justify-start">
+                🤖 AI Listing Assistant
               </Button>
               <Button variant="outline" onClick={() => navigate("/landlord/listings/new")} className="justify-start">
                 Create New Listing
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/landlord/listings")} className="justify-start">
+                View All Listings
               </Button>
             </div>
           </Card>
