@@ -3,11 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Clock } from "lucide-react";
+import { Clock, X } from "lucide-react";
 
 export const SubscriptionBanner = () => {
   const [trialEnd, setTrialEnd] = useState<Date | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string>("trialing");
+  const [isDismissed, setIsDismissed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,26 +31,34 @@ export const SubscriptionBanner = () => {
     fetchSubscription();
   }, []);
 
-  if (subscriptionStatus === "active") return null;
+  if (subscriptionStatus === "active" || isDismissed) return null;
 
   const daysLeft = trialEnd ? Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
   const isExpired = daysLeft <= 0;
 
   return (
-    <Alert className={isExpired ? "border-destructive" : "border-primary bg-primary/5"}>
+    <Alert className={`relative ${isExpired ? "border-destructive" : "border-primary bg-primary/5"}`}>
       <Clock className="h-4 w-4" />
-      <AlertDescription className="flex items-center justify-between">
+      <AlertDescription className="flex items-center justify-between pr-8">
         <span>
           {isExpired
-            ? "Your trial has ended. Subscribe to continue using LiveBigger."
+            ? "Your trial has ended. Subscribe to continue using Roomates."
             : `Trial ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}. Enjoy full access!`}
         </span>
         {isExpired && (
           <Button size="sm" onClick={() => navigate("/subscription")}>
-            Subscribe Now - Free (No Payment Required)
+            Subscribe Now
           </Button>
         )}
       </AlertDescription>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-2 top-2 h-6 w-6"
+        onClick={() => setIsDismissed(true)}
+      >
+        <X className="h-4 w-4" />
+      </Button>
     </Alert>
   );
 };
