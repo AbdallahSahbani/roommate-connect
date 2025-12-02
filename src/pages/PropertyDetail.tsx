@@ -13,7 +13,8 @@ import {
   MapPin, Bed, Bath, Square, Heart, Calendar, 
   DollarSign, ExternalLink, CheckCircle, ArrowLeft, Users 
 } from "lucide-react";
-import { checkEligibility, getApprovedCount, createApplication, checkExistingApplication } from "@/lib/applications";
+import { PropertyCapacity } from "@/components/PropertyCapacity";
+import { ApplicationForm } from "@/components/ApplicationForm";
 
 interface Property {
   id: string;
@@ -41,6 +42,8 @@ interface Property {
   required_id_verified: boolean | null;
   required_income_verified: boolean | null;
   required_background_check: boolean | null;
+  total_slots: number | null;
+  filled_slots: number | null;
 }
 
 const PropertyDetail = () => {
@@ -54,24 +57,33 @@ const PropertyDetail = () => {
   const [message, setMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
   const [isLandlordVerified, setIsLandlordVerified] = useState(false);
-  const [approvedCount, setApprovedCount] = useState(0);
-  const [showEligibilityDialog, setShowEligibilityDialog] = useState(false);
-  const [eligibilityReasons, setEligibilityReasons] = useState<string[]>([]);
-  const [applying, setApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [userGroups, setUserGroups] = useState<any[]>([]);
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  const [showGroupDialog, setShowGroupDialog] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
 
   useEffect(() => {
     if (id) {
       loadProperty();
       checkIfSaved();
-      loadApprovedCount();
       checkIfApplied();
       loadUserGroups();
+      loadUserProfile();
     }
   }, [id]);
+
+  const loadUserProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+
+    setUserProfile(data);
+  };
 
   const loadUserGroups = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -88,17 +100,17 @@ const PropertyDetail = () => {
     }
   };
 
-  const loadApprovedCount = async () => {
-    if (!id) return;
-    const count = await getApprovedCount(id);
-    setApprovedCount(count);
-  };
-
   const checkIfApplied = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session || !id) return;
 
-    const { data } = await checkExistingApplication(id, session.user.id);
+    const { data } = await supabase
+      .from("applications")
+      .select("id")
+      .eq("property_id", id)
+      .eq("applicant_id", session.user.id)
+      .single();
+    
     setHasApplied(!!data);
   };
 
@@ -196,45 +208,6 @@ const PropertyDetail = () => {
     }
   };
 
-  const handleApply = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    // If user has groups, show dialog to choose
-    if (userGroups.length > 0) {
-      setShowGroupDialog(true);
-      return;
-    }
-
-    // Otherwise apply as individual
-    applyAsIndividual();
-  };
-
-  const applyAsIndividual = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || !property) return;
-
-    setApplying(true);
-    try {
-      const { data: existingApp } = await checkExistingApplication(id!, session.user.id);
-      if (existingApp) {
-        toast({
-          title: "Already Applied",
-          description: "You have already applied to this property",
-        });
-        setHasApplied(true);
-        setApplying(false);
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id_verified, income_verified, background_check_status, self_reported_monthly_income")
-        .eq("id", session.user.id)
-        .single();
 
       const eligibility = checkEligibility(profile, property, approvedCount);
 
@@ -607,51 +580,86 @@ const PropertyDetail = () => {
                 <div>
                   <div className="text-3xl font-bold text-primary">${rent.toLocaleString()}</div>
                   <div className="text-sm text-muted-foreground">per month</div>
-                </div>
-                
-                {property.available_from && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4" />
-                    Available from {new Date(property.available_from).toLocaleDateString()}
-                  </div>
-                )}
+                 </div>
+                 
+                 {property.available_from && (
+                   <div className="flex items-center gap-2 text-sm">
+                     <Calendar className="h-4 w-4" />
+                     Available from {new Date(property.available_from).toLocaleDateString()}
+                   </div>
+                 )}
 
-                {property.max_occupants && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4" />
-                    {approvedCount} / {property.max_occupants} spots filled
-                  </div>
-                )}
+                 {/* Capacity Display */}
+                 {property.total_slots && property.total_slots > 0 && (
+                   <div className="pt-4 border-t">
+                     <h4 className="text-sm font-medium mb-3">Live Capacity</h4>
+                     <PropertyCapacity 
+                       totalSlots={property.total_slots} 
+                       filledSlots={property.filled_slots || 0}
+                       variant="full"
+                     />
+                   </div>
+                 )}
 
-                <div className="pt-4 border-t">
+                 <div className="pt-4 border-t">
                   <div className="text-sm text-muted-foreground mb-1">Estimated min. income:</div>
                   <div className="text-xl font-semibold">${estimatedIncome.toLocaleString()}/mo</div>
                 </div>
 
-                <div className="space-y-3">
-                  <Button 
-                    className="w-full" 
-                    onClick={handleApply}
-                    disabled={applying || hasApplied || (property.max_occupants != null && approvedCount >= property.max_occupants)}
-                  >
-                    {applying ? "Applying..." : hasApplied ? "Already Applied" : (property.max_occupants != null && approvedCount >= property.max_occupants) ? "Listing Full" : "Apply for this Property"}
-                  </Button>
-                  
-                  <Textarea
-                    placeholder="Hi, I'm interested in this property. Is it still available?"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={4}
-                  />
-                  <Button 
-                    className="w-full" 
-                    variant="outline"
-                    onClick={sendInquiry}
-                    disabled={sendingMessage}
-                  >
-                    {sendingMessage ? "Sending..." : "Send Message"}
-                  </Button>
-                </div>
+                 <div className="space-y-3">
+                   {!showApplicationForm ? (
+                     <>
+                       <Button 
+                         className="w-full" 
+                         style={{ backgroundColor: '#5B1020' }}
+                         onClick={() => {
+                           const { data: { session } } = supabase.auth.getSession();
+                           if (!session) {
+                             navigate("/auth");
+                             return;
+                           }
+                           setShowApplicationForm(true);
+                         }}
+                         disabled={hasApplied || (property.total_slots != null && (property.filled_slots || 0) >= property.total_slots)}
+                       >
+                         {hasApplied ? "Already Applied" : (property.total_slots != null && (property.filled_slots || 0) >= property.total_slots) ? "Waitlist Only" : "Apply for this Property"}
+                       </Button>
+                       
+                       <Textarea
+                         placeholder="Hi, I'm interested in this property. Is it still available?"
+                         value={message}
+                         onChange={(e) => setMessage(e.target.value)}
+                         rows={4}
+                       />
+                       <Button 
+                         className="w-full" 
+                         variant="outline"
+                         onClick={sendInquiry}
+                         disabled={sendingMessage}
+                       >
+                         {sendingMessage ? "Sending..." : "Send Message"}
+                       </Button>
+                     </>
+                   ) : (
+                     <div className="space-y-4">
+                       <h3 className="font-semibold text-lg">Application</h3>
+                       <ApplicationForm
+                         propertyId={property.id}
+                         totalSlots={property.total_slots || 0}
+                         filledSlots={property.filled_slots || 0}
+                         userProfile={userProfile}
+                         userGroups={userGroups}
+                       />
+                       <Button
+                         variant="ghost"
+                         className="w-full"
+                         onClick={() => setShowApplicationForm(false)}
+                       >
+                         Cancel
+                       </Button>
+                     </div>
+                   )}
+                 </div>
               </CardContent>
             </Card>
 

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Bed, Bath, Square, Heart, DollarSign, ArrowUpDown, Home, CheckCircle2 } from "lucide-react";
 import { CITY_OPTIONS, searchCities, formatCityDisplay, type CityOption } from "@/data/locations";
+import { PropertyCapacity } from "@/components/PropertyCapacity";
 
 interface Property {
   id: string;
@@ -38,6 +39,8 @@ interface Property {
   max_occupants: number | null;
   property_type: string | null;
   landlord_id: string | null;
+  total_slots: number | null;
+  filled_slots: number | null;
 }
 
 interface LandlordProfile {
@@ -677,6 +680,17 @@ const Properties = () => {
                       </span>
                     )}
                   </div>
+                  
+                  {/* Capacity Display */}
+                  {property.total_slots && property.total_slots > 0 && (
+                    <div className="mb-3">
+                      <PropertyCapacity 
+                        totalSlots={property.total_slots} 
+                        filledSlots={property.filled_slots || 0}
+                        variant="badge"
+                      />
+                    </div>
+                  )}
                   
                   {/* Property Features */}
                   <div className="flex flex-wrap gap-2 mb-3">

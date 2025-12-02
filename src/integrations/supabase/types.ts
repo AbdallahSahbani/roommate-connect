@@ -86,6 +86,7 @@ export type Database = {
           meets_capacity: boolean
           meets_income: boolean
           meets_verification: boolean
+          move_in_date: string | null
           property_id: string
           status: string | null
           updated_at: string | null
@@ -98,6 +99,7 @@ export type Database = {
           meets_capacity: boolean
           meets_income: boolean
           meets_verification: boolean
+          move_in_date?: string | null
           property_id: string
           status?: string | null
           updated_at?: string | null
@@ -110,6 +112,7 @@ export type Database = {
           meets_capacity?: boolean
           meets_income?: boolean
           meets_verification?: boolean
+          move_in_date?: string | null
           property_id?: string
           status?: string | null
           updated_at?: string | null
@@ -224,6 +227,38 @@ export type Database = {
           user_id_2?: string | null
         }
         Relationships: []
+      }
+      conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          landlord_id: string | null
+          property_id: string | null
+          renter_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          landlord_id?: string | null
+          property_id?: string | null
+          renter_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          landlord_id?: string | null
+          property_id?: string | null
+          renter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       external_listings: {
         Row: {
@@ -517,7 +552,9 @@ export type Database = {
       }
       messages: {
         Row: {
+          body: string | null
           content: string
+          conversation_id: string | null
           created_at: string | null
           group_id: string | null
           id: string
@@ -526,7 +563,9 @@ export type Database = {
           sender_id: string | null
         }
         Insert: {
+          body?: string | null
           content: string
+          conversation_id?: string | null
           created_at?: string | null
           group_id?: string | null
           id?: string
@@ -535,7 +574,9 @@ export type Database = {
           sender_id?: string | null
         }
         Update: {
+          body?: string | null
           content?: string
+          conversation_id?: string | null
           created_at?: string | null
           group_id?: string | null
           id?: string
@@ -544,6 +585,13 @@ export type Database = {
           sender_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_group_id_fkey"
             columns: ["group_id"]
@@ -698,6 +746,7 @@ export type Database = {
         Row: {
           address: string
           amenities: string[] | null
+          auto_capacity: boolean | null
           available_from: string | null
           available_rooms: number
           bathrooms: number | null
@@ -707,6 +756,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           external_listing_url: string | null
+          filled_slots: number | null
           furnished: boolean | null
           id: string
           is_active: boolean | null
@@ -745,6 +795,7 @@ export type Database = {
           title: string
           total_bathrooms: number | null
           total_bedrooms: number
+          total_slots: number | null
           updated_at: string | null
           use_platform_payments: boolean | null
           utilities_included: boolean | null
@@ -754,6 +805,7 @@ export type Database = {
         Insert: {
           address: string
           amenities?: string[] | null
+          auto_capacity?: boolean | null
           available_from?: string | null
           available_rooms: number
           bathrooms?: number | null
@@ -763,6 +815,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           external_listing_url?: string | null
+          filled_slots?: number | null
           furnished?: boolean | null
           id?: string
           is_active?: boolean | null
@@ -801,6 +854,7 @@ export type Database = {
           title: string
           total_bathrooms?: number | null
           total_bedrooms: number
+          total_slots?: number | null
           updated_at?: string | null
           use_platform_payments?: boolean | null
           utilities_included?: boolean | null
@@ -810,6 +864,7 @@ export type Database = {
         Update: {
           address?: string
           amenities?: string[] | null
+          auto_capacity?: boolean | null
           available_from?: string | null
           available_rooms?: number
           bathrooms?: number | null
@@ -819,6 +874,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           external_listing_url?: string | null
+          filled_slots?: number | null
           furnished?: boolean | null
           id?: string
           is_active?: boolean | null
@@ -857,6 +913,7 @@ export type Database = {
           title?: string
           total_bathrooms?: number | null
           total_bedrooms?: number
+          total_slots?: number | null
           updated_at?: string | null
           use_platform_payments?: boolean | null
           utilities_included?: boolean | null
@@ -906,6 +963,44 @@ export type Database = {
           },
           {
             foreignKeyName: "property_inquiries_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_meetings: {
+        Row: {
+          created_at: string | null
+          id: string
+          landlord_id: string
+          property_id: string
+          reserved_by: string | null
+          start_time: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          landlord_id: string
+          property_id: string
+          reserved_by?: string | null
+          start_time: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          landlord_id?: string
+          property_id?: string
+          reserved_by?: string | null
+          start_time?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_meetings_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
