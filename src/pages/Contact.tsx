@@ -7,6 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Mail, MessageSquare, Phone } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  subject: z.string().trim().min(1, "Subject is required").max(200, "Subject must be less than 200 characters"),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters")
+});
 
 export default function Contact() {
   const { toast } = useToast();
@@ -22,15 +31,40 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      // Validate form data
+      const validatedData = contactSchema.parse(formData);
+      
+      // Call edge function to send email
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: validatedData
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Message sent!",
         description: "We'll get back to you within 24 hours."
       });
+      
       setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
