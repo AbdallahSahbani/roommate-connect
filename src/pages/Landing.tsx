@@ -64,7 +64,7 @@ const Landing = () => {
                 Find a place
               </Button>
             </Link>
-            <Link to="/landlord/listings" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
+            <Link to="/landlord/assistant" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
               I'm a landlord
             </Link>
           </div>
