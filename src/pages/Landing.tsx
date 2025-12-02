@@ -45,53 +45,27 @@ const Landing = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#5B1020]/25 via-transparent to-transparent" />
         </div>
         
-        <div className="mx-auto max-w-7xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left Column - Text Content */}
-            <div className="text-left space-y-6 order-2 lg:order-1">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-2xl" style={{ fontFamily: 'Inter, SF Pro, system-ui, sans-serif' }}>
-                Live bigger, pay less.
-              </h1>
-              <p className="text-lg sm:text-xl text-white/95 max-w-xl drop-shadow-lg leading-relaxed">
-                Team up with verified roommates and real properties. Roomates connects renters, landlords, and shared homes into one trusted platform.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link to="/properties">
-                  <Button 
-                    size="lg" 
-                    className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                    style={{ backgroundColor: '#5B1020', color: 'white' }}
-                  >
-                    Find a place
-                  </Button>
-                </Link>
-                <Link to="/landlord/listings" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
-                  I'm a landlord
-                </Link>
-              </div>
-            </div>
-            
-            {/* Right Column - Ad Card */}
-            <div className="order-1 lg:order-2">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl border border-white/20 hover:shadow-[#5B1020]/20 transition-all duration-300 hover:scale-[1.02]">
-                <img 
-                  src={roommatesAd} 
-                  alt="Roomates - Live bigger, pay less with verified roommates" 
-                  className="w-full h-auto"
-                />
-                <div className="p-6">
-                  <Link to="/properties">
-                    <Button 
-                      className="w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300"
-                      style={{ backgroundColor: '#5B1020', color: 'white' }}
-                    >
-                      Find a place
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+        <div className="mx-auto max-w-4xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-2xl mb-6" style={{ fontFamily: 'Inter, SF Pro, system-ui, sans-serif' }}>
+            Live bigger, pay less.
+          </h1>
+          <p className="text-lg sm:text-xl text-white/95 max-w-2xl mx-auto drop-shadow-lg leading-relaxed mb-8">
+            Team up with verified roommates and real properties. Roomates connects renters, landlords, and shared homes into one trusted platform.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Link to="/properties">
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                style={{ backgroundColor: '#5B1020', color: 'white' }}
+              >
+                Find a place
+              </Button>
+            </Link>
+            <Link to="/landlord/listings" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
+              I'm a landlord
+            </Link>
           </div>
         </div>
       </section>
@@ -201,18 +175,44 @@ const Landing = () => {
 
       {/* CTA Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">
-            Ready to Live Bigger with Less?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of users who've found their ideal living situation through Roomates.
-          </p>
-          <Link to="/auth">
-            <Button size="lg" className="shadow-hover">
-              Start Your Search Today
-            </Button>
-          </Link>
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4 text-foreground">
+              Ready to Live Bigger with Less?
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Join thousands of users who've found their ideal living situation through Roomates.
+            </p>
+          </div>
+          
+          {/* Ad Card - Half Size */}
+          <div className="max-w-md mx-auto mb-8">
+            <div className="bg-card rounded-xl overflow-hidden shadow-card border hover:shadow-glow transition-all duration-300">
+              <img 
+                src={roommatesAd} 
+                alt="Roomates - Live bigger, pay less with verified roommates" 
+                className="w-full h-auto"
+              />
+              <div className="p-4">
+                <Link to="/properties">
+                  <Button 
+                    className="w-full py-5 shadow-hover"
+                    style={{ backgroundColor: '#5B1020', color: 'white' }}
+                  >
+                    Find a place
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <Link to="/auth">
+              <Button size="lg" className="shadow-hover">
+                Start Your Search Today
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
