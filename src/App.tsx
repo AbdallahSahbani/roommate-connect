@@ -54,8 +54,8 @@ const App = () => (
           <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
           <Route path="/landlord/listings/new" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
           <Route path="/landlord/listings/:id/edit" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
-          <Route path="/landlord/applications" element={<ProtectedRoute requireLandlord><LandlordApplications /></ProtectedRoute>} />
-          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/landlord/applications/:propertyId" element={<ProtectedRoute requireLandlord><LandlordApplications /></ProtectedRoute>} />
+          <Route path="/messages/:conversationId?" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
           <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
           <Route path="/income-verification" element={<ProtectedRoute><IncomeVerification /></ProtectedRoute>} />

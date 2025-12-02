@@ -4,13 +4,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import nycSkyline from "@/assets/nyc-skyline.png";
+import sfSkyline from "@/assets/sf-skyline.jpg";
+import roommatesAd from "@/assets/roommates-ad.png";
+
 const Landing = () => {
   const navigate = useNavigate();
   const [searchCity, setSearchCity] = useState("");
   const [searchState, setSearchState] = useState("");
   const [maxRent, setMaxRent] = useState("");
   const [bedrooms, setBedrooms] = useState("");
+  
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (searchCity) params.append("city", searchCity);
@@ -19,106 +22,149 @@ const Landing = () => {
     if (bedrooms && bedrooms !== "any") params.append("bedrooms", bedrooms);
     navigate(`/properties?${params.toString()}`);
   };
+  
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
-  return <div className="min-h-screen relative">
-      {/* Hero Section with Search */}
-      <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 min-h-[700px] flex items-center">
-        <div className="absolute inset-0 z-0" style={{
-        backgroundImage: `url(${nycSkyline})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
+  
+  return (
+    <div className="min-h-screen relative">
+      {/* Hero Section with New SF Skyline Background */}
+      <section className="relative overflow-hidden min-h-[70vh] md:min-h-[70vh] sm:min-h-[60vh] flex items-center">
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${sfSkyline})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-[#5B1020]/25 via-transparent to-transparent" />
         </div>
-        <div className="mx-auto max-w-7xl relative z-10 w-full">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl drop-shadow-lg font-serif text-[#a2a2a2] md:text-7xl">
-              Roomates
-            </h1>
-            <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto drop-shadow-md">
-              Roomates helps renters team up with verified roommates to share quality homes for less – and gives landlords a secure way to list properties to pre-verified tenants.
-            </p>
-
-            {/* Search Card */}
-            <div className="mt-10 max-w-4xl mx-auto">
-              <div className="bg-card/95 backdrop-blur-sm rounded-xl p-6 shadow-hover">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      City
-                    </label>
-                    <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-card-foreground">State</label>
-                    <Select value={searchState} onValueChange={setSearchState}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Select state" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CT">Connecticut</SelectItem>
-                        <SelectItem value="NY">New York</SelectItem>
-                        <SelectItem value="MA">Massachusetts</SelectItem>
-                        <SelectItem value="RI">Rhode Island</SelectItem>
-                        <SelectItem value="NJ">New Jersey</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
-                      <DollarSign className="h-4 w-4" />
-                      Max Rent
-                    </label>
-                    <Input type="number" placeholder="3500" value={maxRent} onChange={e => setMaxRent(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
-                      <Bed className="h-4 w-4" />
-                      Bedrooms
-                    </label>
-                    <Select value={bedrooms} onValueChange={setBedrooms}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Any" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="1">1+</SelectItem>
-                        <SelectItem value="2">2+</SelectItem>
-                        <SelectItem value="3">3+</SelectItem>
-                        <SelectItem value="4">4+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button size="lg" className="w-full mt-6" onClick={handleSearch}>
-                  Search Properties
-                </Button>
+        
+        <div className="mx-auto max-w-7xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Column - Text Content */}
+            <div className="text-left space-y-6 order-2 lg:order-1">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-2xl" style={{ fontFamily: 'Inter, SF Pro, system-ui, sans-serif' }}>
+                Live bigger, pay less.
+              </h1>
+              <p className="text-lg sm:text-xl text-white/95 max-w-xl drop-shadow-lg leading-relaxed">
+                Team up with verified roommates and real properties. Roomates connects renters, landlords, and shared homes into one trusted platform.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link to="/properties">
+                  <Button 
+                    size="lg" 
+                    className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    style={{ backgroundColor: '#5B1020', color: 'white' }}
+                  >
+                    Find a place
+                  </Button>
+                </Link>
+                <Link to="/landlord/listings" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
+                  I'm a landlord
+                </Link>
               </div>
             </div>
+            
+            {/* Right Column - Ad Card */}
+            <div className="order-1 lg:order-2">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl border border-white/20 hover:shadow-[#5B1020]/20 transition-all duration-300 hover:scale-[1.02]">
+                <img 
+                  src={roommatesAd} 
+                  alt="Roomates - Live bigger, pay less with verified roommates" 
+                  className="w-full h-auto"
+                />
+                <div className="p-6">
+                  <Link to="/properties">
+                    <Button 
+                      className="w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                      style={{ backgroundColor: '#5B1020', color: 'white' }}
+                    >
+                      Find a place
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-8 flex flex-wrap gap-4 justify-center">
-              <Link to="/auth">
-                <Button size="lg" variant="secondary">
-                  Get Started
-                </Button>
-              </Link>
-              <Link to="/browse">
-                <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                  Browse Roommates
-                </Button>
-              </Link>
-              <Link to="/landlord/listings">
-                <Button size="lg" variant="outline" className="bg-primary/90 border-primary text-white hover:bg-primary">
-                  <Building2 className="mr-2 h-5 w-5" />
-                  I'm a Landlord
-                </Button>
-              </Link>
+      {/* Tagline Section */}
+      <section className="bg-muted/30 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-lg text-foreground/80">
+            Roomates helps renters team up with verified roommates to share quality homes for less – and gives landlords a secure way to list properties to pre-verified tenants.
+          </p>
+        </div>
+      </section>
+      
+      {/* Search Card Section */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-background">
+        <div className="mx-auto max-w-7xl">
+          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
+            Search for Your Perfect Home
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-card rounded-xl p-6 shadow-hover border">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    City
+                  </label>
+                  <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground">State</label>
+                  <Select value={searchState} onValueChange={setSearchState}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CT">Connecticut</SelectItem>
+                      <SelectItem value="NY">New York</SelectItem>
+                      <SelectItem value="MA">Massachusetts</SelectItem>
+                      <SelectItem value="RI">Rhode Island</SelectItem>
+                      <SelectItem value="NJ">New Jersey</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Max Rent
+                  </label>
+                  <Input type="number" placeholder="3500" value={maxRent} onChange={e => setMaxRent(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
+                    <Bed className="h-4 w-4" />
+                    Bedrooms
+                  </label>
+                  <Select value={bedrooms} onValueChange={setBedrooms}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="1">1+</SelectItem>
+                      <SelectItem value="2">2+</SelectItem>
+                      <SelectItem value="3">3+</SelectItem>
+                      <SelectItem value="4">4+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button size="lg" className="w-full mt-6" onClick={handleSearch}>
+                Search Properties
+              </Button>
             </div>
           </div>
         </div>
@@ -209,8 +255,10 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 const FeatureCard = ({
   icon,
   title,
@@ -219,11 +267,14 @@ const FeatureCard = ({
   icon: React.ReactNode;
   title: string;
   description: string;
-}) => <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
+}) => (
+  <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
     <div className="mb-4 group-hover:scale-110 transition-bounce">{icon}</div>
     <h3 className="text-xl font-semibold mb-2 text-card-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
-  </div>;
+  </div>
+);
+
 const StepCard = ({
   number,
   title,
@@ -232,11 +283,14 @@ const StepCard = ({
   number: string;
   title: string;
   description: string;
-}) => <div className="text-center animate-scale-in group">
+}) => (
+  <div className="text-center animate-scale-in group">
     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-bounce">
       {number}
     </div>
     <h3 className="text-xl font-semibold mb-2 text-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
-  </div>;
+  </div>
+);
+
 export default Landing;
