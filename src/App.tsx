@@ -11,6 +11,7 @@ import Browse from "./pages/Browse";
 import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import Groups from "./pages/Groups";
+import GroupDetail from "./pages/GroupDetail";
 import LandlordListings from "./pages/LandlordListings";
 import LandlordListingForm from "./pages/LandlordListingForm";
 import Messages from "./pages/Messages";
@@ -52,6 +53,7 @@ const App = () => (
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetail />} />
         <Route path="/groups" element={<ProtectedRoute requireRenter><Groups /></ProtectedRoute>} />
+        <Route path="/groups/:id" element={<ProtectedRoute requireRenter><GroupDetail /></ProtectedRoute>} />
         <Route path="/become-landlord" element={<BecomeLandlord />} />
         <Route path="/landlord/dashboard" element={<ProtectedRoute requireLandlord><LandlordDashboard /></ProtectedRoute>} />
         <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
