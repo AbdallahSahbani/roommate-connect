@@ -31,6 +31,8 @@ import AdminVerifications from "./pages/admin/AdminVerifications";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProperties from "./pages/admin/AdminProperties";
 import LandlordApplications from "./pages/landlord/LandlordApplications";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +69,8 @@ const App = () => (
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/board" element={<Board />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
