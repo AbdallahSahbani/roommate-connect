@@ -1,13 +1,15 @@
 import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users } from "lucide-react";
+import founderPhoto from "@/assets/founder-photo.png";
 
 const boardMembers = [
   {
     name: "Abdallah Tawfik Sahbani II",
     role: "Founder",
-    initials: "AT"
+    initials: "AT",
+    photo: founderPhoto
   },
   {
     name: "Chief Executive Officer",
@@ -57,6 +59,7 @@ export default function Board() {
               <Card key={index} className={`p-6 ${member.vacant ? 'opacity-60' : ''}`}>
                 <div className="flex flex-col items-center text-center">
                   <Avatar className="h-20 w-20 mb-4">
+                    {member.photo && <AvatarImage src={member.photo} alt={member.name} />}
                     <AvatarFallback className={member.vacant ? 'bg-muted' : 'bg-primary text-primary-foreground'}>
                       {member.initials}
                     </AvatarFallback>
