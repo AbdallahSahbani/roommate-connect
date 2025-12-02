@@ -73,9 +73,14 @@ export default function LandlordListings() {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-foreground">My Listings</h1>
-            <Button onClick={() => navigate("/landlord/listings/new")}>
-              Create Listing
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate("/landlord/assistant")}>
+                🤖 AI Assistant
+              </Button>
+              <Button onClick={() => navigate("/landlord/listings/new")}>
+                Create Listing
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
