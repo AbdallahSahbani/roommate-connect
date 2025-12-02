@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import sfSkyline from "@/assets/sf-skyline.jpg";
 import roommatesAd from "@/assets/roommates-ad.png";
+import oceanTexture from "@/assets/ocean-texture.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -80,8 +81,9 @@ const Landing = () => {
       </section>
       
       {/* Search Card Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="mx-auto max-w-7xl">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/80" />
+        <div className="mx-auto max-w-7xl relative z-10">
           <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
             Search for Your Perfect Home
           </h2>
@@ -145,8 +147,9 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
-        <div className="mx-auto max-w-7xl">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="mx-auto max-w-7xl relative z-10">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             Why Choose Roomates?
           </h2>
@@ -160,8 +163,9 @@ const Landing = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
-        <div className="mx-auto max-w-7xl">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-muted/90" />
+        <div className="mx-auto max-w-7xl relative z-10">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             How It Works
           </h2>
@@ -174,8 +178,9 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-glass">
-        <div className="mx-auto max-w-4xl">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="mx-auto max-w-4xl relative z-10">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4 text-foreground">
               Ready to Live Bigger with Less?
