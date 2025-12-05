@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Send, Sparkles } from "lucide-react";
+import { Loader2, Send, Sparkles, ArrowLeft, Home } from "lucide-react";
 import { toast } from "sonner";
 
 type Message = {
@@ -21,14 +21,12 @@ export default function LandlordAssistant() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Auto-scroll to bottom when messages change
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
   useEffect(() => {
-    // Check if we have enough data to generate a listing
     const messageContent = messages.map(m => m.content.toLowerCase()).join(" ");
     const hasBasics = messageContent.includes("rent") || messageContent.includes("price");
     const hasLocation = messageContent.includes("address") || messageContent.includes("city");
@@ -101,13 +99,11 @@ export default function LandlordAssistant() {
         }
       }
 
-      // Check if response contains JSON for property data
       if (action === "generate_listing" && assistantContent.includes("{")) {
         try {
           const jsonMatch = assistantContent.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             const propertyData = JSON.parse(jsonMatch[0]);
-            // Store in sessionStorage and navigate to form
             sessionStorage.setItem("draftListing", JSON.stringify(propertyData));
             toast.success("Draft listing created! Redirecting to form...");
             setTimeout(() => navigate("/landlord/listings/new"), 1500);
@@ -141,6 +137,40 @@ export default function LandlordAssistant() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-4">
       <div className="max-w-4xl mx-auto space-y-4">
+        {/* Navigation Buttons */}
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate(-1)}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            asChild
+            className="gap-2"
+          >
+            <Link to="/">
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            asChild
+            className="gap-2 ml-auto"
+          >
+            <Link to="/landlord/dashboard">
+              Landlord Dashboard
+            </Link>
+          </Button>
+        </div>
+
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">

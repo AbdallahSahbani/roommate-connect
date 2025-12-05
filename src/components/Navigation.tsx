@@ -74,15 +74,15 @@ export const Navigation = () => {
             {isLandlord && (
               <>
                 <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/landlord/listings">
+                  <Link to="/landlord/dashboard">
                     <Building className="h-4 w-4 mr-2" />
-                    My Listings
+                    Landlord Dashboard
                   </Link>
                 </Button>
                 <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/landlord/applications">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Applications
+                  <Link to="/landlord/listings">
+                    <Building2 className="h-4 w-4 mr-2" />
+                    My Listings
                   </Link>
                 </Button>
               </>
