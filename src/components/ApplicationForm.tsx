@@ -225,9 +225,8 @@ export const ApplicationForm = ({
 
       <Button 
         type="submit" 
-        className="w-full"
+        className="w-full bg-primary hover:bg-primary-dark"
         disabled={isSubmitting || !moveInDate}
-        style={{ backgroundColor: '#5B1020' }}
       >
         {isSubmitting ? "Submitting..." : "Submit Application"}
       </Button>
