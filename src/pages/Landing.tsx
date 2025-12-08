@@ -43,7 +43,7 @@ const Landing = () => {
             backgroundRepeat: 'no-repeat'
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#5B1020]/25 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/25 via-transparent to-transparent" />
         </div>
         
         <div className="mx-auto max-w-4xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
@@ -58,8 +58,7 @@ const Landing = () => {
             <Link to="/properties">
               <Button 
                 size="lg" 
-                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                style={{ backgroundColor: '#5B1020', color: 'white' }}
+                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-primary hover:bg-primary-dark text-primary-foreground"
               >
                 Find a place
               </Button>
@@ -219,8 +218,7 @@ const Landing = () => {
                 <div className="p-4">
                   <Link to="/properties">
                     <Button 
-                      className="w-full py-5 shadow-hover"
-                      style={{ backgroundColor: '#5B1020', color: 'white' }}
+                      className="w-full py-5 shadow-hover bg-primary hover:bg-primary-dark text-primary-foreground"
                     >
                       Find a place
                     </Button>
