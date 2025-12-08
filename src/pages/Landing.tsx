@@ -43,7 +43,8 @@ const Landing = () => {
             backgroundRepeat: 'no-repeat'
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/25 via-transparent to-transparent" />
+          {/* Dark overlay for text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/70 via-primary-dark/40 to-primary-dark/60" />
         </div>
         
         <div className="mx-auto max-w-4xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
