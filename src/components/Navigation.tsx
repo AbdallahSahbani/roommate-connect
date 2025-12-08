@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, User, MessageSquare, Building2, LogOut, Shield, Building, Heart, Users } from "lucide-react";
+import { Home, User, MessageSquare, Building2, LogOut, Shield, Building, Heart, Users, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentUserRole } from "@/hooks/useCurrentUserRole";
@@ -9,7 +9,7 @@ import logo from "@/assets/roommates-logo.png";
 export const Navigation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isLandlord, isAdmin, isRenter } = useCurrentUserRole();
+  const { isLandlord, isAdmin, isRenter, loading } = useCurrentUserRole();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -38,7 +38,7 @@ export const Navigation = () => {
           </Link>
 
           <div className="flex items-center gap-1">
-            {/* All users */}
+            {/* All users - always visible */}
             <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
               <Link to="/">
                 <Home className="h-4 w-4 mr-2" />
@@ -52,53 +52,62 @@ export const Navigation = () => {
               </Link>
             </Button>
             
-            {/* Renter-only menu */}
-            {isRenter && (
-              <>
-                <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/roommates/swipe">
-                    <Heart className="h-4 w-4 mr-2" />
-                    Find Roommates
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/groups">
-                    <Users className="h-4 w-4 mr-2" />
-                    My Groups
-                  </Link>
-                </Button>
-              </>
-            )}
-            
-            {/* Landlord-only menu */}
-            {isLandlord && (
-              <>
-                <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/landlord/dashboard">
-                    <Building className="h-4 w-4 mr-2" />
-                    Landlord Dashboard
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                  <Link to="/landlord/listings">
-                    <Building2 className="h-4 w-4 mr-2" />
-                    My Listings
-                  </Link>
-                </Button>
-              </>
-            )}
-            
-            {/* Admin-only menu */}
-            {isAdmin && (
-              <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                <Link to="/admin">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Admin
-                </Link>
+            {/* Show loading state while fetching roles */}
+            {loading ? (
+              <Button variant="ghost" size="sm" disabled className="text-primary-foreground/50">
+                <Loader2 className="h-4 w-4 animate-spin" />
               </Button>
+            ) : (
+              <>
+                {/* Renter-only menu - only show if user is renter AND not landlord-only */}
+                {isRenter && (
+                  <>
+                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                      <Link to="/roommates/swipe">
+                        <Heart className="h-4 w-4 mr-2" />
+                        Find Roommates
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                      <Link to="/groups">
+                        <Users className="h-4 w-4 mr-2" />
+                        My Groups
+                      </Link>
+                    </Button>
+                  </>
+                )}
+                
+                {/* Landlord-only menu - only show if user is landlord */}
+                {isLandlord && (
+                  <>
+                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                      <Link to="/landlord/dashboard">
+                        <Building className="h-4 w-4 mr-2" />
+                        Landlord Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                      <Link to="/landlord/listings">
+                        <Building2 className="h-4 w-4 mr-2" />
+                        My Listings
+                      </Link>
+                    </Button>
+                  </>
+                )}
+                
+                {/* Admin-only menu */}
+                {isAdmin && (
+                  <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
+                    <Link to="/admin">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Admin
+                    </Link>
+                  </Button>
+                )}
+              </>
             )}
             
-            {/* All authenticated users */}
+            {/* All authenticated users - always visible */}
             <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
               <Link to="/messages">
                 <MessageSquare className="h-4 w-4 mr-2" />
