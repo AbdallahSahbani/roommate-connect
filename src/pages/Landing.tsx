@@ -8,6 +8,7 @@ import sfSkyline from "@/assets/sf-skyline.jpg";
 import roommatesCta from "@/assets/roommates-cta.png";
 import oceanTexture from "@/assets/ocean-texture.jpg";
 import RentPressureChart from "@/components/RentPressureChart";
+import HowItWorksSection from "@/components/HowItWorksSection";
 const US_STATES = [
   { code: "AL", name: "Alabama" },
   { code: "AK", name: "Alaska" },
@@ -279,19 +280,7 @@ const Landing = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0 bg-muted/90" />
-        <div className="mx-auto max-w-7xl relative z-10">
-          <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
-            How It Works
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StepCard number="1" title="Search for Your Place" description="Browse verified rentals in your preferred location and budget range." />
-            <StepCard number="2" title="Find Compatible Roommates" description="Connect with roommates who match your lifestyle and preferences." />
-            <StepCard number="3" title="Apply Together" description="Form groups and apply to rental properties with confidence." />
-          </div>
-        </div>
-      </section>
+      <HowItWorksSection />
 
       {/* CTA Section with Testimonials */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
