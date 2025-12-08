@@ -5,6 +5,7 @@ import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, User, Shield, Heart } from "lucide-react";
@@ -37,35 +38,35 @@ const Browse = () => {
 
   const loadProfiles = async () => {
     try {
+      setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         navigate("/auth");
         return;
       }
 
-      // Load current user's profile
-      const { data: userProfile, error: userError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
+      const [userProfileResponse, profilesResponse] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single(),
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("is_active", true)
+          .eq("is_public_profile", true)
+          .neq("id", session.user.id)
+          .not("bio", "is", null)
+          .limit(20),
+      ]);
 
-      if (userError) throw userError;
-      setCurrentUser(userProfile);
+      if (userProfileResponse.error) throw userProfileResponse.error;
+      if (profilesResponse.error) throw profilesResponse.error;
 
-      // Load other public profiles only (users who opted in to be visible)
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("is_active", true)
-        .eq("is_public_profile", true)
-        .neq("id", session.user.id)
-        .not("bio", "is", null)
-        .limit(20);
-
-      if (error) throw error;
-      setProfiles(data || []);
+      setCurrentUser(userProfileResponse.data);
+      setProfiles(profilesResponse.data || []);
     } catch (error: any) {
       toast({
         title: "Error loading profiles",
@@ -138,83 +139,113 @@ const Browse = () => {
     return Math.round(score);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Loading profiles...</p>
-      </div>
-    );
-  }
+  const renderLoadingSkeletons = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <Card key={index} className="shadow-card">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-40" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-7 w-16 rounded-full" />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+            </div>
+            <div className="space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderProfiles = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {profiles.map((profile) => {
+        const compatibilityScore = calculateCompatibility(profile);
+        return (
+          <Card key={profile.id} className="shadow-card hover:shadow-hover transition-shadow">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle>{profile.full_name}</CardTitle>
+                  <CardDescription>{profile.occupation}</CardDescription>
+                </div>
+                <Badge
+                  variant={compatibilityScore >= 70 ? "default" : compatibilityScore >= 50 ? "secondary" : "outline"}
+                  className="text-lg px-3 py-1"
+                >
+                  {compatibilityScore}%
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {profile.bio || "No bio available"}
+              </p>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Budget:</span>
+                  <span className="font-medium">${profile.budget_min}-{profile.budget_max}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Sleep:</span>
+                  <span className="font-medium capitalize">
+                    {profile.sleep_schedule?.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Cleanliness:</span>
+                  <span className="font-medium">{profile.cleanliness_level}/5</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Heart className="h-4 w-4 mr-2" />
+                  Like
+                </Button>
+                <Button size="sm" className="flex-1">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Message
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SubscriptionBanner />
-        
+
         <div className="mb-8 mt-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Browse Roommates</h1>
           <p className="text-muted-foreground">Find compatible matches based on your lifestyle</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {profiles.map((profile) => {
-            const compatibilityScore = calculateCompatibility(profile);
-            return (
-              <Card key={profile.id} className="shadow-card hover:shadow-hover transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{profile.full_name}</CardTitle>
-                      <CardDescription>{profile.occupation}</CardDescription>
-                    </div>
-                    <Badge 
-                      variant={compatibilityScore >= 70 ? "default" : compatibilityScore >= 50 ? "secondary" : "outline"}
-                      className="text-lg px-3 py-1"
-                    >
-                      {compatibilityScore}%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {profile.bio || "No bio available"}
-                  </p>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Budget:</span>
-                      <span className="font-medium">${profile.budget_min}-${profile.budget_max}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Sleep:</span>
-                      <span className="font-medium capitalize">
-                        {profile.sleep_schedule?.replace("_", " ")}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Cleanliness:</span>
-                      <span className="font-medium">{profile.cleanliness_level}/5</span>
-                    </div>
-                  </div>
 
-                  <div className="flex gap-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Heart className="h-4 w-4 mr-2" />
-                      Like
-                    </Button>
-                    <Button size="sm" className="flex-1">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Message
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {loading ? renderLoadingSkeletons() : renderProfiles()}
 
-        {profiles.length === 0 && (
+        {!loading && profiles.length === 0 && (
           <Card className="shadow-card">
             <CardContent className="py-12 text-center">
               <p className="text-lg text-muted-foreground mb-4">
