@@ -1,6 +1,6 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, User, MessageSquare, Building2, LogOut, Shield, Building, Heart, Users, Loader2, ArrowLeftRight } from "lucide-react";
+import { Home, User, MessageSquare, Building2, LogOut, Shield, Building, Heart, Users, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentUserRole } from "@/hooks/useCurrentUserRole";
@@ -8,14 +8,8 @@ import logo from "@/assets/roommates-logo.png";
 
 export const Navigation = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const { isLandlord, isAdmin, isRenter, loading } = useCurrentUserRole();
-
-  // Determine which mode the user is in based on current route
-  const isOnLandlordRoute = location.pathname.startsWith('/landlord');
-  const isOnAdminRoute = location.pathname.startsWith('/admin');
-  const isOnRenterRoute = !isOnLandlordRoute && !isOnAdminRoute;
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -27,15 +21,6 @@ export const Navigation = () => {
       });
     } else {
       navigate("/");
-    }
-  };
-
-  // Function to switch between renter and landlord modes
-  const handleSwitchMode = () => {
-    if (isOnLandlordRoute && isRenter) {
-      navigate("/properties");
-    } else if (isOnRenterRoute && isLandlord) {
-      navigate("/landlord/dashboard");
     }
   };
 
@@ -68,8 +53,8 @@ export const Navigation = () => {
               </Button>
             ) : (
               <>
-                {/* LANDLORD MODE - Show when on landlord routes AND user is landlord */}
-                {isOnLandlordRoute && isLandlord && (
+                {/* LANDLORD ACCOUNT - Landlords see ONLY landlord tabs */}
+                {isLandlord && (
                   <>
                     <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
                       <Link to="/landlord/dashboard">
@@ -83,23 +68,11 @@ export const Navigation = () => {
                         My Listings
                       </Link>
                     </Button>
-                    {/* Switch to Renter mode if user is also a renter */}
-                    {isRenter && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={handleSwitchMode}
-                        className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium border border-primary-foreground/30"
-                      >
-                        <ArrowLeftRight className="h-4 w-4 mr-2" />
-                        Switch to Renter
-                      </Button>
-                    )}
                   </>
                 )}
 
-                {/* RENTER MODE - Show when NOT on landlord routes AND user is renter */}
-                {isOnRenterRoute && isRenter && (
+                {/* RENTER ACCOUNT - Renters see ONLY renter tabs */}
+                {isRenter && !isLandlord && (
                   <>
                     <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
                       <Link to="/properties">
@@ -108,7 +81,7 @@ export const Navigation = () => {
                       </Link>
                     </Button>
                     <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
-                      <Link to="/roommates/swipe">
+                      <Link to="/roommate-swipe">
                         <Heart className="h-4 w-4 mr-2" />
                         Find Roommates
                       </Link>
@@ -119,23 +92,11 @@ export const Navigation = () => {
                         My Groups
                       </Link>
                     </Button>
-                    {/* Switch to Landlord mode if user is also a landlord */}
-                    {isLandlord && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={handleSwitchMode}
-                        className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium border border-primary-foreground/30"
-                      >
-                        <ArrowLeftRight className="h-4 w-4 mr-2" />
-                        Switch to Landlord
-                      </Button>
-                    )}
                   </>
                 )}
 
                 {/* For users without roles or not logged in - show browse only */}
-                {!isRenter && !isLandlord && !isOnAdminRoute && (
+                {!isRenter && !isLandlord && !isAdmin && (
                   <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
                     <Link to="/properties">
                       <Building2 className="h-4 w-4 mr-2" />
@@ -144,7 +105,7 @@ export const Navigation = () => {
                   </Button>
                 )}
 
-                {/* Admin menu - only on admin routes or for admins */}
+                {/* Admin menu - only for admins */}
                 {isAdmin && (
                   <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:text-white hover:bg-white/15 font-medium">
                     <Link to="/admin">
