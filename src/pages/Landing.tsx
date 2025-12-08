@@ -4,7 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import sfSkyline from "@/assets/sf-skyline.jpg";
 import roommatesCta from "@/assets/roommates-cta.png";
+import oceanTexture from "@/assets/ocean-texture.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -29,11 +31,21 @@ const Landing = () => {
   };
   
   return (
-    <div className="min-h-screen relative" style={{ backgroundImage: `url('/textures/dark-cubes-bg.png')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
-      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-      
-      {/* Hero Section */}
+    <div className="min-h-screen relative">
+      {/* Hero Section with New SF Skyline Background */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[70vh] sm:min-h-[60vh] flex items-center">
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${sfSkyline})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-[#5B1020]/25 via-transparent to-transparent" />
+        </div>
+        
         <div className="mx-auto max-w-4xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-2xl mb-6" style={{ fontFamily: 'Inter, SF Pro, system-ui, sans-serif' }}>
             Live bigger, pay less.
@@ -46,7 +58,8 @@ const Landing = () => {
             <Link to="/properties">
               <Button 
                 size="lg" 
-                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-primary hover:bg-primary-light text-white"
+                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                style={{ backgroundColor: '#5B1020', color: 'white' }}
               >
                 Find a place
               </Button>
@@ -59,34 +72,35 @@ const Landing = () => {
       </section>
 
       {/* Tagline Section */}
-      <section className="relative z-10 bg-black/50 backdrop-blur-sm py-8 px-4 sm:px-6 lg:px-8">
+      <section className="bg-muted/30 py-8 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-lg text-white/90">
+          <p className="text-lg text-foreground/80">
             Roomates helps renters team up with verified roommates to share quality homes for less – and gives landlords a secure way to list properties to pre-verified tenants.
           </p>
         </div>
       </section>
       
       {/* Search Card Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-8 text-white drop-shadow-lg">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/80" />
+        <div className="mx-auto max-w-7xl relative z-10">
+          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
             Search for Your Perfect Home
           </h2>
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-hover border border-white/20">
+            <div className="bg-card rounded-xl p-6 shadow-hover border">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-white flex items-center gap-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
                     City
                   </label>
-                  <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-white/20 border-white/30 text-white placeholder:text-white/60" />
+                  <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">State</label>
+                  <label className="text-sm font-medium text-card-foreground">State</label>
                   <Select value={searchState} onValueChange={setSearchState}>
-                    <SelectTrigger className="bg-white/20 border-white/30 text-white">
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
@@ -99,19 +113,19 @@ const Landing = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-white flex items-center gap-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
                     Max Rent
                   </label>
-                  <Input type="number" placeholder="3500" value={maxRent} onChange={e => setMaxRent(e.target.value)} onKeyPress={handleKeyPress} className="bg-white/20 border-white/30 text-white placeholder:text-white/60" />
+                  <Input type="number" placeholder="3500" value={maxRent} onChange={e => setMaxRent(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-white flex items-center gap-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
                     <Bed className="h-4 w-4" />
                     Bedrooms
                   </label>
                   <Select value={bedrooms} onValueChange={setBedrooms}>
-                    <SelectTrigger className="bg-white/20 border-white/30 text-white">
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
@@ -124,7 +138,7 @@ const Landing = () => {
                   </Select>
                 </div>
               </div>
-              <Button size="lg" className="w-full mt-6 bg-primary hover:bg-primary-light text-white" onClick={handleSearch}>
+              <Button size="lg" className="w-full mt-6" onClick={handleSearch}>
                 Search Properties
               </Button>
             </div>
@@ -133,24 +147,26 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12 text-white drop-shadow-lg">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="mx-auto max-w-7xl relative z-10">
+          <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             Why Choose Roomates?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard icon={<Users className="h-8 w-8 text-primary-light" />} title="Smart Matching" description="Our compatibility algorithm finds roommates who truly match your lifestyle and preferences." />
-            <FeatureCard icon={<Shield className="h-8 w-8 text-primary-light" />} title="Verified Users" description="ID verification, income checks, and background screening ensure your safety." />
-            <FeatureCard icon={<Home className="h-8 w-8 text-primary-light" />} title="Quality Listings" description="Browse verified properties from trusted landlords across your preferred cities." />
-            <FeatureCard icon={<CheckCircle className="h-8 w-8 text-primary-light" />} title="Group Applications" description="Form groups with compatible roommates and apply to properties together." />
+            <FeatureCard icon={<Users className="h-8 w-8 text-primary" />} title="Smart Matching" description="Our compatibility algorithm finds roommates who truly match your lifestyle and preferences." />
+            <FeatureCard icon={<Shield className="h-8 w-8 text-primary" />} title="Verified Users" description="ID verification, income checks, and background screening ensure your safety." />
+            <FeatureCard icon={<Home className="h-8 w-8 text-primary" />} title="Quality Listings" description="Browse verified properties from trusted landlords across your preferred cities." />
+            <FeatureCard icon={<CheckCircle className="h-8 w-8 text-primary" />} title="Group Applications" description="Form groups with compatible roommates and apply to properties together." />
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 relative z-10 bg-black/30 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12 text-white drop-shadow-lg">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-muted/90" />
+        <div className="mx-auto max-w-7xl relative z-10">
+          <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             How It Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -162,20 +178,21 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mx-auto max-w-4xl">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="mx-auto max-w-4xl relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-white drop-shadow-lg">
+            <h2 className="text-3xl font-bold mb-4 text-foreground">
               Ready to Live Bigger with Less?
             </h2>
-            <p className="text-lg text-white/80 mb-8">
+            <p className="text-lg text-muted-foreground mb-8">
               Join thousands of users who've found their ideal living situation through Roomates.
             </p>
           </div>
           
           {/* Ad Card - Half Size */}
           <div className="max-w-md mx-auto">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-card border border-white/20 hover:shadow-glow transition-all duration-300">
+            <div className="bg-card rounded-xl overflow-hidden shadow-card border hover:shadow-glow transition-all duration-300">
               <img 
                 src={roommatesCta} 
                 alt="Roomates - Live bigger, pay less with verified roommates" 
@@ -184,7 +201,8 @@ const Landing = () => {
               <div className="p-4">
                 <Link to="/properties">
                   <Button 
-                    className="w-full py-5 shadow-hover bg-primary hover:bg-primary-light text-white"
+                    className="w-full py-5 shadow-hover"
+                    style={{ backgroundColor: '#5B1020', color: 'white' }}
                   >
                     Find a place
                   </Button>
@@ -247,10 +265,10 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-card border border-white/20 hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
+  <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
     <div className="mb-4 group-hover:scale-110 transition-bounce">{icon}</div>
-    <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-    <p className="text-white/70">{description}</p>
+    <h3 className="text-xl font-semibold mb-2 text-card-foreground">{title}</h3>
+    <p className="text-muted-foreground">{description}</p>
   </div>
 );
 
@@ -264,11 +282,11 @@ const StepCard = ({
   description: string;
 }) => (
   <div className="text-center animate-scale-in group">
-    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-bounce">
+    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold mb-4 shadow-glow group-hover:scale-110 transition-bounce">
       {number}
     </div>
-    <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-    <p className="text-white/70">{description}</p>
+    <h3 className="text-xl font-semibold mb-2 text-foreground">{title}</h3>
+    <p className="text-muted-foreground">{description}</p>
   </div>
 );
 
