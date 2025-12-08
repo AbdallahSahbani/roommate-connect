@@ -177,10 +177,10 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section with Testimonials */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-background/85" />
-        <div className="mx-auto max-w-4xl relative z-10">
+        <div className="mx-auto max-w-7xl relative z-10">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4 text-foreground">
               Ready to Live Bigger with Less?
@@ -190,25 +190,76 @@ const Landing = () => {
             </p>
           </div>
           
-          {/* Ad Card - Half Size */}
-          <div className="max-w-md mx-auto">
-            <div className="bg-card rounded-xl overflow-hidden shadow-card border hover:shadow-glow transition-all duration-300">
-              <img 
-                src={roommatesCta} 
-                alt="Roomates - Live bigger, pay less with verified roommates" 
-                className="w-full h-auto"
+          {/* Three Column Layout: Testimonial - Ad Card - Testimonial */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            {/* Left Testimonial */}
+            <div className="hidden lg:flex flex-col gap-6">
+              <TestimonialCard 
+                quote="I was nervous about finding roommates in NYC. Roomates matched me with two amazing people, and now we share a beautiful 3BR in Brooklyn for less than I'd pay for a studio!"
+                name="Sarah M."
+                location="Brooklyn, NY"
+                role="Software Engineer"
               />
-              <div className="p-4">
-                <Link to="/properties">
-                  <Button 
-                    className="w-full py-5 shadow-hover"
-                    style={{ backgroundColor: '#5B1020', color: 'white' }}
-                  >
-                    Find a place
-                  </Button>
-                </Link>
+              <TestimonialCard 
+                quote="The verification process gave me peace of mind. Knowing my future roommates were background-checked made the whole experience stress-free."
+                name="James T."
+                location="Boston, MA"
+                role="Medical Resident"
+              />
+            </div>
+
+            {/* Center Ad Card */}
+            <div className="max-w-md mx-auto w-full">
+              <div className="bg-card rounded-xl overflow-hidden shadow-card border hover:shadow-glow transition-all duration-300">
+                <img 
+                  src={roommatesCta} 
+                  alt="Roomates - Live bigger, pay less with verified roommates" 
+                  className="w-full h-auto"
+                />
+                <div className="p-4">
+                  <Link to="/properties">
+                    <Button 
+                      className="w-full py-5 shadow-hover"
+                      style={{ backgroundColor: '#5B1020', color: 'white' }}
+                    >
+                      Find a place
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
+
+            {/* Right Testimonial */}
+            <div className="hidden lg:flex flex-col gap-6">
+              <TestimonialCard 
+                quote="As a landlord, I love that tenants come pre-verified. No more wasting time on unqualified applicants – every group that applies is ready to move in."
+                name="Michael R."
+                location="San Francisco, CA"
+                role="Property Owner"
+              />
+              <TestimonialCard 
+                quote="Moving to a new city was scary, but finding my roommate group through Roomates turned strangers into friends. Best decision I ever made!"
+                name="Emily K."
+                location="Austin, TX"
+                role="Marketing Manager"
+              />
+            </div>
+          </div>
+
+          {/* Mobile Testimonials - Show below on smaller screens */}
+          <div className="lg:hidden mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TestimonialCard 
+              quote="I was nervous about finding roommates in NYC. Roomates matched me with two amazing people!"
+              name="Sarah M."
+              location="Brooklyn, NY"
+              role="Software Engineer"
+            />
+            <TestimonialCard 
+              quote="As a landlord, I love that tenants come pre-verified. No more wasting time on unqualified applicants."
+              name="Michael R."
+              location="San Francisco, CA"
+              role="Property Owner"
+            />
           </div>
         </div>
       </section>
@@ -287,6 +338,33 @@ const StepCard = ({
     </div>
     <h3 className="text-xl font-semibold mb-2 text-foreground">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
+  </div>
+);
+
+const TestimonialCard = ({
+  quote,
+  name,
+  location,
+  role
+}: {
+  quote: string;
+  name: string;
+  location: string;
+  role: string;
+}) => (
+  <div className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-card border hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
+    <div className="flex gap-1 mb-3">
+      {[...Array(5)].map((_, i) => (
+        <svg key={i} className="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 20 20">
+          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+        </svg>
+      ))}
+    </div>
+    <p className="text-muted-foreground text-sm italic mb-4 leading-relaxed">"{quote}"</p>
+    <div className="border-t pt-3">
+      <p className="font-semibold text-card-foreground text-sm">{name}</p>
+      <p className="text-xs text-muted-foreground">{role} • {location}</p>
+    </div>
   </div>
 );
 
