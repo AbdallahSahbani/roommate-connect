@@ -7,7 +7,7 @@ import { useState } from "react";
 import sfSkyline from "@/assets/sf-skyline.jpg";
 import roommatesCta from "@/assets/roommates-cta.png";
 import oceanTexture from "@/assets/ocean-texture.jpg";
-
+import RentPressureChart from "@/components/RentPressureChart";
 const US_STATES = [
   { code: "AL", name: "Alabama" },
   { code: "AK", name: "Alaska" },
@@ -256,18 +256,24 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section with Rent Chart */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 relative" style={{ backgroundImage: `url(${oceanTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-background/85" />
-        <div className="mx-auto max-w-7xl relative z-10">
+        <div className="mx-auto max-w-6xl relative z-10">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             Why Choose Roomates?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FeatureCard icon={<Users className="h-8 w-8 text-primary" />} title="Smart Matching" description="Our compatibility algorithm finds roommates who truly match your lifestyle and preferences." />
-            <FeatureCard icon={<Shield className="h-8 w-8 text-primary" />} title="Verified Users" description="ID verification, income checks, and background screening ensure your safety." />
-            <FeatureCard icon={<Home className="h-8 w-8 text-primary" />} title="Quality Listings" description="Browse verified properties from trusted landlords across your preferred cities." />
-            <FeatureCard icon={<CheckCircle className="h-8 w-8 text-primary" />} title="Group Applications" description="Form groups with compatible roommates and apply to properties together." />
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-8 items-start">
+            {/* Left: Feature Cards in 2x2 Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FeatureCard icon={<Users className="h-6 w-6 text-primary" />} title="Smart Matching" description="Our algorithm finds roommates who truly match your lifestyle." />
+              <FeatureCard icon={<Shield className="h-6 w-6 text-primary" />} title="Verified Users" description="ID verification, income checks, and background screening." />
+              <FeatureCard icon={<Home className="h-6 w-6 text-primary" />} title="Quality Listings" description="Browse verified properties from trusted landlords." />
+              <FeatureCard icon={<CheckCircle className="h-6 w-6 text-primary" />} title="Group Applications" description="Form groups and apply to properties together." />
+            </div>
+            
+            {/* Right: Rent Pressure Chart */}
+            <RentPressureChart />
           </div>
         </div>
       </section>
@@ -425,10 +431,10 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-  <div className="bg-texture rounded-xl p-6 shadow-card hover:shadow-glow transition-smooth hover:scale-105 group animate-fade-up">
-    <div className="mb-4 group-hover:scale-110 transition-bounce">{icon}</div>
-    <h3 className="text-xl font-semibold mb-2 text-card-foreground">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
+  <div className="bg-card/60 backdrop-blur-lg rounded-xl p-5 shadow-card hover:shadow-glow transition-smooth hover:scale-[1.02] group border border-border/40">
+    <div className="mb-3 group-hover:scale-110 transition-bounce">{icon}</div>
+    <h3 className="text-lg font-semibold mb-1.5 text-card-foreground">{title}</h3>
+    <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
   </div>
 );
 
