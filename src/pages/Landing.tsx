@@ -45,27 +45,38 @@ const Landing = () => {
         />
         
         <div className="mx-auto max-w-4xl relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <div className="bg-primary-dark/75 backdrop-blur-sm rounded-2xl p-8 sm:p-12">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6" style={{ fontFamily: 'Inter, SF Pro, system-ui, sans-serif', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-              Live bigger, pay less.
-            </h1>
-            <p className="text-lg sm:text-xl text-white/95 max-w-2xl mx-auto leading-relaxed mb-8" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
-              Team up with verified roommates and real properties. Roomates connects renters, landlords, and shared homes into one trusted platform.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link to="/properties">
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-white text-primary-dark hover:bg-white/90"
-                >
-                  Find a place
-                </Button>
-              </Link>
-              <Link to="/become-landlord" className="text-white/90 hover:text-white transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4">
-                I'm a landlord
-              </Link>
-            </div>
+          <h1 
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6"
+            style={{ 
+              fontFamily: 'Inter, SF Pro, system-ui, sans-serif',
+              textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.4)'
+            }}
+          >
+            Live bigger, pay less.
+          </h1>
+          <p 
+            className="text-lg sm:text-xl text-white max-w-2xl mx-auto leading-relaxed mb-8 font-medium"
+            style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.5)' }}
+          >
+            Team up with verified roommates and real properties. Roomates connects renters, landlords, and shared homes into one trusted platform.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Link to="/properties">
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-primary hover:bg-primary-dark text-primary-foreground"
+              >
+                Find a place
+              </Button>
+            </Link>
+            <Link 
+              to="/become-landlord" 
+              className="text-white hover:text-white/90 transition-colors flex items-center justify-center sm:justify-start text-lg underline underline-offset-4 font-medium"
+              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}
+            >
+              I'm a landlord
+            </Link>
           </div>
         </div>
       </section>
