@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      abuse_flags: {
+        Row: {
+          created_at: string | null
+          details: string | null
+          id: string
+          reason: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          severity: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       agreements: {
         Row: {
           created_at: string | null
@@ -526,6 +562,30 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          created_at: string | null
+          email_hash: string
+          id: string
+          ip_hash: string
+          success: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_hash: string
+          id?: string
+          ip_hash: string
+          success?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email_hash?: string
+          id?: string
+          ip_hash?: string
+          success?: boolean | null
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
@@ -612,6 +672,7 @@ export type Database = {
           created_at: string | null
           date_of_birth: string | null
           email: string
+          email_verified: boolean | null
           full_name: string | null
           guest_frequency: string | null
           id: string
@@ -621,9 +682,12 @@ export type Database = {
           income_verified_source: string | null
           is_active: boolean | null
           is_public_profile: boolean | null
+          is_suspended: boolean | null
           landlord_subscription_active: boolean | null
           landlord_verified: boolean | null
+          last_login_at: string | null
           lease_duration_months: number | null
+          login_count: number | null
           move_in_date: string | null
           noise_tolerance: number | null
           occupation: string | null
@@ -634,6 +698,7 @@ export type Database = {
           preferred_city: string | null
           preferred_country: string | null
           preferred_state: string | null
+          profile_completed: boolean | null
           profile_photo_url: string | null
           role: string | null
           self_reported_monthly_income: number | null
@@ -642,9 +707,12 @@ export type Database = {
           social_preference: string | null
           subscription_start: string | null
           subscription_status: string | null
+          suspended_at: string | null
+          suspension_reason: string | null
           tenant_subscription_active: boolean | null
           trial_end: string | null
           trial_start: string | null
+          trust_level: string | null
           updated_at: string | null
           work_from_home: boolean | null
         }
@@ -658,6 +726,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth?: string | null
           email: string
+          email_verified?: boolean | null
           full_name?: string | null
           guest_frequency?: string | null
           id: string
@@ -667,9 +736,12 @@ export type Database = {
           income_verified_source?: string | null
           is_active?: boolean | null
           is_public_profile?: boolean | null
+          is_suspended?: boolean | null
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
+          last_login_at?: string | null
           lease_duration_months?: number | null
+          login_count?: number | null
           move_in_date?: string | null
           noise_tolerance?: number | null
           occupation?: string | null
@@ -680,6 +752,7 @@ export type Database = {
           preferred_city?: string | null
           preferred_country?: string | null
           preferred_state?: string | null
+          profile_completed?: boolean | null
           profile_photo_url?: string | null
           role?: string | null
           self_reported_monthly_income?: number | null
@@ -688,9 +761,12 @@ export type Database = {
           social_preference?: string | null
           subscription_start?: string | null
           subscription_status?: string | null
+          suspended_at?: string | null
+          suspension_reason?: string | null
           tenant_subscription_active?: boolean | null
           trial_end?: string | null
           trial_start?: string | null
+          trust_level?: string | null
           updated_at?: string | null
           work_from_home?: boolean | null
         }
@@ -704,6 +780,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth?: string | null
           email?: string
+          email_verified?: boolean | null
           full_name?: string | null
           guest_frequency?: string | null
           id?: string
@@ -713,9 +790,12 @@ export type Database = {
           income_verified_source?: string | null
           is_active?: boolean | null
           is_public_profile?: boolean | null
+          is_suspended?: boolean | null
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
+          last_login_at?: string | null
           lease_duration_months?: number | null
+          login_count?: number | null
           move_in_date?: string | null
           noise_tolerance?: number | null
           occupation?: string | null
@@ -726,6 +806,7 @@ export type Database = {
           preferred_city?: string | null
           preferred_country?: string | null
           preferred_state?: string | null
+          profile_completed?: boolean | null
           profile_photo_url?: string | null
           role?: string | null
           self_reported_monthly_income?: number | null
@@ -734,9 +815,12 @@ export type Database = {
           social_preference?: string | null
           subscription_start?: string | null
           subscription_status?: string | null
+          suspended_at?: string | null
+          suspension_reason?: string | null
           tenant_subscription_active?: boolean | null
           trial_end?: string | null
           trial_start?: string | null
+          trust_level?: string | null
           updated_at?: string | null
           work_from_home?: boolean | null
         }
@@ -1040,6 +1124,36 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          action_type: string
+          count: number | null
+          created_at: string | null
+          id: string
+          ip_hash: string | null
+          user_id: string | null
+          window_start: string | null
+        }
+        Insert: {
+          action_type: string
+          count?: number | null
+          created_at?: string | null
+          id?: string
+          ip_hash?: string | null
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          action_type?: string
+          count?: number | null
+          created_at?: string | null
+          id?: string
+          ip_hash?: string | null
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       saved_listings: {
         Row: {
           created_at: string | null
@@ -1068,6 +1182,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          ip_hash: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       states: {
         Row: {
@@ -1307,8 +1451,29 @@ export type Database = {
       }
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          _action_type: string
+          _ip_hash: string
+          _max_count: number
+          _user_id: string
+          _window_minutes: number
+        }
+        Returns: boolean
+      }
+      cleanup_rate_limits: { Args: never; Returns: undefined }
+      create_abuse_flag: {
+        Args: {
+          _details?: string
+          _reason: string
+          _severity?: string
+          _user_id: string
+        }
+        Returns: string
+      }
       generate_property_code: { Args: { state_abbr: string }; Returns: string }
       generate_public_code: { Args: { _state: string }; Returns: string }
+      get_trust_level: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1319,6 +1484,17 @@ export type Database = {
       is_property_landlord: {
         Args: { _property_id: string; _user_id: string }
         Returns: boolean
+      }
+      is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
+      log_security_event: {
+        Args: {
+          _event_type: string
+          _ip_hash?: string
+          _metadata?: Json
+          _user_agent?: string
+          _user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
