@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { SuspendedBanner } from "./components/SuspendedBanner";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
@@ -31,6 +32,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminVerifications from "./pages/admin/AdminVerifications";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProperties from "./pages/admin/AdminProperties";
+import AdminAbuse from "./pages/admin/AdminAbuse";
 import LandlordApplications from "./pages/landlord/LandlordApplications";
 import LandlordAssistant from "./pages/landlord/LandlordAssistant";
 import BecomeLandlord from "./pages/BecomeLandlord";
@@ -43,6 +45,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <Toaster />
     <Sonner />
+    <SuspendedBanner />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -65,6 +68,7 @@ const App = () => (
         <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
         <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
         <Route path="/income-verification" element={<ProtectedRoute><IncomeVerification /></ProtectedRoute>} />
+        <Route path="/roommate-swipe" element={<ProtectedRoute requireRenter><RoommateSwipe /></ProtectedRoute>} />
         <Route path="/roommates/swipe" element={<ProtectedRoute requireRenter><RoommateSwipe /></ProtectedRoute>} />
         <Route path="/subscribe" element={<ProtectedRoute><Subscribe /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
@@ -72,6 +76,7 @@ const App = () => (
         <Route path="/admin/verifications" element={<ProtectedRoute requireAdmin><AdminVerifications /></ProtectedRoute>} />
         <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
         <Route path="/admin/properties" element={<ProtectedRoute requireAdmin><AdminProperties /></ProtectedRoute>} />
+        <Route path="/admin/abuse" element={<ProtectedRoute requireAdmin><AdminAbuse /></ProtectedRoute>} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/board" element={<Board />} />
