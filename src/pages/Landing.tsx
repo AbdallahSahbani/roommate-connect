@@ -1,17 +1,90 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2 } from "lucide-react";
+import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2, Globe } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import sfSkyline from "@/assets/sf-skyline.jpg";
 import roommatesCta from "@/assets/roommates-cta.png";
 import oceanTexture from "@/assets/ocean-texture.jpg";
 
+const US_STATES = [
+  { code: "AL", name: "Alabama" },
+  { code: "AK", name: "Alaska" },
+  { code: "AZ", name: "Arizona" },
+  { code: "AR", name: "Arkansas" },
+  { code: "CA", name: "California" },
+  { code: "CO", name: "Colorado" },
+  { code: "CT", name: "Connecticut" },
+  { code: "DE", name: "Delaware" },
+  { code: "FL", name: "Florida" },
+  { code: "GA", name: "Georgia" },
+  { code: "HI", name: "Hawaii" },
+  { code: "ID", name: "Idaho" },
+  { code: "IL", name: "Illinois" },
+  { code: "IN", name: "Indiana" },
+  { code: "IA", name: "Iowa" },
+  { code: "KS", name: "Kansas" },
+  { code: "KY", name: "Kentucky" },
+  { code: "LA", name: "Louisiana" },
+  { code: "ME", name: "Maine" },
+  { code: "MD", name: "Maryland" },
+  { code: "MA", name: "Massachusetts" },
+  { code: "MI", name: "Michigan" },
+  { code: "MN", name: "Minnesota" },
+  { code: "MS", name: "Mississippi" },
+  { code: "MO", name: "Missouri" },
+  { code: "MT", name: "Montana" },
+  { code: "NE", name: "Nebraska" },
+  { code: "NV", name: "Nevada" },
+  { code: "NH", name: "New Hampshire" },
+  { code: "NJ", name: "New Jersey" },
+  { code: "NM", name: "New Mexico" },
+  { code: "NY", name: "New York" },
+  { code: "NC", name: "North Carolina" },
+  { code: "ND", name: "North Dakota" },
+  { code: "OH", name: "Ohio" },
+  { code: "OK", name: "Oklahoma" },
+  { code: "OR", name: "Oregon" },
+  { code: "PA", name: "Pennsylvania" },
+  { code: "RI", name: "Rhode Island" },
+  { code: "SC", name: "South Carolina" },
+  { code: "SD", name: "South Dakota" },
+  { code: "TN", name: "Tennessee" },
+  { code: "TX", name: "Texas" },
+  { code: "UT", name: "Utah" },
+  { code: "VT", name: "Vermont" },
+  { code: "VA", name: "Virginia" },
+  { code: "WA", name: "Washington" },
+  { code: "WV", name: "West Virginia" },
+  { code: "WI", name: "Wisconsin" },
+  { code: "WY", name: "Wyoming" },
+  { code: "DC", name: "Washington D.C." },
+];
+
+const COUNTRIES = [
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" },
+  { code: "IT", name: "Italy" },
+  { code: "NL", name: "Netherlands" },
+  { code: "SE", name: "Sweden" },
+  { code: "JP", name: "Japan" },
+  { code: "CN", name: "China" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "AE", name: "United Arab Emirates" },
+  { code: "OM", name: "Oman" },
+  { code: "TR", name: "Turkey" },
+  { code: "TN", name: "Tunisia" },
+  { code: "MA", name: "Morocco" },
+];
+
 const Landing = () => {
   const navigate = useNavigate();
   const [searchCity, setSearchCity] = useState("");
   const [searchState, setSearchState] = useState("");
+  const [searchCountry, setSearchCountry] = useState("US");
   const [maxRent, setMaxRent] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   
@@ -19,6 +92,7 @@ const Landing = () => {
     const params = new URLSearchParams();
     if (searchCity) params.append("city", searchCity);
     if (searchState) params.append("state", searchState);
+    if (searchCountry) params.append("country", searchCountry);
     if (maxRent) params.append("maxRent", maxRent);
     if (bedrooms && bedrooms !== "any") params.append("bedrooms", bedrooms);
     navigate(`/properties?${params.toString()}`);
@@ -97,31 +171,55 @@ const Landing = () => {
           <h2 className="text-3xl font-bold text-center mb-8 text-foreground">
             Search for Your Perfect Home
           </h2>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <div className="bg-card rounded-xl p-6 shadow-hover border">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    Country
+                  </label>
+                  <Select value={searchCountry} onValueChange={setSearchCountry}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRIES.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-card-foreground">State / Region</label>
+                  <Select value={searchState} onValueChange={setSearchState}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {searchCountry === "US" ? (
+                        US_STATES.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="all">All Regions</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
                     City
                   </label>
-                  <Input placeholder="New Haven" value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
+                  <Input placeholder="New York, London, Paris..." value={searchCity} onChange={e => setSearchCity(e.target.value)} onKeyPress={handleKeyPress} className="bg-background" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-card-foreground">State</label>
-                  <Select value={searchState} onValueChange={setSearchState}>
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="CT">Connecticut</SelectItem>
-                      <SelectItem value="NY">New York</SelectItem>
-                      <SelectItem value="MA">Massachusetts</SelectItem>
-                      <SelectItem value="RI">Rhode Island</SelectItem>
-                      <SelectItem value="NJ">New Jersey</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-card-foreground flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
@@ -147,10 +245,12 @@ const Landing = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="flex items-end">
+                  <Button size="lg" className="w-full" onClick={handleSearch}>
+                    Search Properties
+                  </Button>
+                </div>
               </div>
-              <Button size="lg" className="w-full mt-6" onClick={handleSearch}>
-                Search Properties
-              </Button>
             </div>
           </div>
         </div>
