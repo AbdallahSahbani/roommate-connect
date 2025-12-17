@@ -1,1 +1,4 @@
 project_id = "hwabuzzcrvteelwzaeag"
+
+[functions.roommate-risk-review]
+verify_jwt = true
