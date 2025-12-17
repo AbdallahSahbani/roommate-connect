@@ -232,33 +232,54 @@ export type Database = {
         Row: {
           budget_score: number | null
           calculated_at: string | null
+          flags: string[] | null
+          followups: string[] | null
           id: string
           lifestyle_score: number | null
+          llm_summary: string | null
+          location_score: number | null
           overall_score: number | null
+          recommended_action: string | null
+          risk_score: number | null
           schedule_score: number | null
           social_score: number | null
+          status: string | null
           user_id_1: string | null
           user_id_2: string | null
         }
         Insert: {
           budget_score?: number | null
           calculated_at?: string | null
+          flags?: string[] | null
+          followups?: string[] | null
           id?: string
           lifestyle_score?: number | null
+          llm_summary?: string | null
+          location_score?: number | null
           overall_score?: number | null
+          recommended_action?: string | null
+          risk_score?: number | null
           schedule_score?: number | null
           social_score?: number | null
+          status?: string | null
           user_id_1?: string | null
           user_id_2?: string | null
         }
         Update: {
           budget_score?: number | null
           calculated_at?: string | null
+          flags?: string[] | null
+          followups?: string[] | null
           id?: string
           lifestyle_score?: number | null
+          llm_summary?: string | null
+          location_score?: number | null
           overall_score?: number | null
+          recommended_action?: string | null
+          risk_score?: number | null
           schedule_score?: number | null
           social_score?: number | null
+          status?: string | null
           user_id_1?: string | null
           user_id_2?: string | null
         }
@@ -686,6 +707,7 @@ export type Database = {
           landlord_subscription_active: boolean | null
           landlord_verified: boolean | null
           last_login_at: string | null
+          last_profile_change_at: string | null
           lease_duration_months: number | null
           login_count: number | null
           move_in_date: string | null
@@ -698,6 +720,7 @@ export type Database = {
           preferred_city: string | null
           preferred_country: string | null
           preferred_state: string | null
+          profile_changes_count: number | null
           profile_completed: boolean | null
           profile_photo_url: string | null
           role: string | null
@@ -740,6 +763,7 @@ export type Database = {
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
           last_login_at?: string | null
+          last_profile_change_at?: string | null
           lease_duration_months?: number | null
           login_count?: number | null
           move_in_date?: string | null
@@ -752,6 +776,7 @@ export type Database = {
           preferred_city?: string | null
           preferred_country?: string | null
           preferred_state?: string | null
+          profile_changes_count?: number | null
           profile_completed?: boolean | null
           profile_photo_url?: string | null
           role?: string | null
@@ -794,6 +819,7 @@ export type Database = {
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
           last_login_at?: string | null
+          last_profile_change_at?: string | null
           lease_duration_months?: number | null
           login_count?: number | null
           move_in_date?: string | null
@@ -806,6 +832,7 @@ export type Database = {
           preferred_city?: string | null
           preferred_country?: string | null
           preferred_state?: string | null
+          profile_changes_count?: number | null
           profile_completed?: boolean | null
           profile_photo_url?: string | null
           role?: string | null
