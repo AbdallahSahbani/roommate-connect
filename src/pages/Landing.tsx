@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Home, Users, Shield, CheckCircle, MapPin, DollarSign, Bed, Building2, Globe } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import sfSkyline from "@/assets/sf-skyline.jpg";
+import laDowntown from "@/assets/la-downtown.jpg";
 import roommatesCta from "@/assets/roommates-cta.png";
 import oceanTexture from "@/assets/ocean-texture.jpg";
 import RentPressureChart from "@/components/RentPressureChart";
@@ -112,7 +112,7 @@ const Landing = () => {
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: `url(${sfSkyline})`,
+            backgroundImage: `url(${laDowntown})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
