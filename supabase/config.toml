@@ -2,3 +2,12 @@ project_id = "hwabuzzcrvteelwzaeag"
 
 [functions.roommate-risk-review]
 verify_jwt = true
+
+[functions.evaluate-action]
+verify_jwt = true
+
+[functions.landlord-assistant]
+verify_jwt = true
+
+[functions.send-contact-email]
+verify_jwt = false
