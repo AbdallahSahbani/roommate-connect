@@ -317,6 +317,57 @@ export type Database = {
           },
         ]
       }
+      decision_explanations: {
+        Row: {
+          ai_flags: string[] | null
+          ai_recommended_action: string | null
+          ai_risk_score: number | null
+          created_at: string | null
+          decision_type: string
+          final_decision: string
+          human_override: boolean | null
+          id: string
+          inputs_snapshot: Json
+          override_by: string | null
+          override_reason: string | null
+          rules_triggered: string[] | null
+          target_id: string
+          user_id: string | null
+        }
+        Insert: {
+          ai_flags?: string[] | null
+          ai_recommended_action?: string | null
+          ai_risk_score?: number | null
+          created_at?: string | null
+          decision_type: string
+          final_decision: string
+          human_override?: boolean | null
+          id?: string
+          inputs_snapshot: Json
+          override_by?: string | null
+          override_reason?: string | null
+          rules_triggered?: string[] | null
+          target_id: string
+          user_id?: string | null
+        }
+        Update: {
+          ai_flags?: string[] | null
+          ai_recommended_action?: string | null
+          ai_risk_score?: number | null
+          created_at?: string | null
+          decision_type?: string
+          final_decision?: string
+          human_override?: boolean | null
+          id?: string
+          inputs_snapshot?: Json
+          override_by?: string | null
+          override_reason?: string | null
+          rules_triggered?: string[] | null
+          target_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       external_listings: {
         Row: {
           bedrooms: number | null
@@ -684,6 +735,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          application_burst_count: number | null
           avatar_url: string | null
           background_check_status: string | null
           bio: string | null
@@ -692,20 +744,25 @@ export type Database = {
           cleanliness_level: number | null
           created_at: string | null
           date_of_birth: string | null
+          device_hash: string | null
           email: string
           email_verified: boolean | null
+          fraud_flags: string[] | null
           full_name: string | null
+          group_reshuffles: number | null
           guest_frequency: string | null
           id: string
           id_verification_status: string | null
           id_verified: boolean | null
           income_verified: boolean | null
           income_verified_source: string | null
+          ip_hash: string | null
           is_active: boolean | null
           is_public_profile: boolean | null
           is_suspended: boolean | null
           landlord_subscription_active: boolean | null
           landlord_verified: boolean | null
+          last_application_at: string | null
           last_login_at: string | null
           last_profile_change_at: string | null
           lease_duration_months: number | null
@@ -737,9 +794,11 @@ export type Database = {
           trial_start: string | null
           trust_level: string | null
           updated_at: string | null
+          verification_retry_count: number | null
           work_from_home: boolean | null
         }
         Insert: {
+          application_burst_count?: number | null
           avatar_url?: string | null
           background_check_status?: string | null
           bio?: string | null
@@ -748,20 +807,25 @@ export type Database = {
           cleanliness_level?: number | null
           created_at?: string | null
           date_of_birth?: string | null
+          device_hash?: string | null
           email: string
           email_verified?: boolean | null
+          fraud_flags?: string[] | null
           full_name?: string | null
+          group_reshuffles?: number | null
           guest_frequency?: string | null
           id: string
           id_verification_status?: string | null
           id_verified?: boolean | null
           income_verified?: boolean | null
           income_verified_source?: string | null
+          ip_hash?: string | null
           is_active?: boolean | null
           is_public_profile?: boolean | null
           is_suspended?: boolean | null
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
+          last_application_at?: string | null
           last_login_at?: string | null
           last_profile_change_at?: string | null
           lease_duration_months?: number | null
@@ -793,9 +857,11 @@ export type Database = {
           trial_start?: string | null
           trust_level?: string | null
           updated_at?: string | null
+          verification_retry_count?: number | null
           work_from_home?: boolean | null
         }
         Update: {
+          application_burst_count?: number | null
           avatar_url?: string | null
           background_check_status?: string | null
           bio?: string | null
@@ -804,20 +870,25 @@ export type Database = {
           cleanliness_level?: number | null
           created_at?: string | null
           date_of_birth?: string | null
+          device_hash?: string | null
           email?: string
           email_verified?: boolean | null
+          fraud_flags?: string[] | null
           full_name?: string | null
+          group_reshuffles?: number | null
           guest_frequency?: string | null
           id?: string
           id_verification_status?: string | null
           id_verified?: boolean | null
           income_verified?: boolean | null
           income_verified_source?: string | null
+          ip_hash?: string | null
           is_active?: boolean | null
           is_public_profile?: boolean | null
           is_suspended?: boolean | null
           landlord_subscription_active?: boolean | null
           landlord_verified?: boolean | null
+          last_application_at?: string | null
           last_login_at?: string | null
           last_profile_change_at?: string | null
           lease_duration_months?: number | null
@@ -849,6 +920,7 @@ export type Database = {
           trial_start?: string | null
           trust_level?: string | null
           updated_at?: string | null
+          verification_retry_count?: number | null
           work_from_home?: boolean | null
         }
         Relationships: []
@@ -897,6 +969,7 @@ export type Database = {
           required_background_check: boolean | null
           required_id_verified: boolean | null
           required_income_verified: boolean | null
+          reserved_slots: number | null
           security_deposit: number | null
           smoking_allowed: boolean | null
           square_feet: number | null
@@ -956,6 +1029,7 @@ export type Database = {
           required_background_check?: boolean | null
           required_id_verified?: boolean | null
           required_income_verified?: boolean | null
+          reserved_slots?: number | null
           security_deposit?: number | null
           smoking_allowed?: boolean | null
           square_feet?: number | null
@@ -1015,6 +1089,7 @@ export type Database = {
           required_background_check?: boolean | null
           required_id_verified?: boolean | null
           required_income_verified?: boolean | null
+          reserved_slots?: number | null
           security_deposit?: number | null
           smoking_allowed?: boolean | null
           square_feet?: number | null
@@ -1239,6 +1314,90 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      security_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          lockdown: boolean
+          lockdown_at: string | null
+          lockdown_by: string | null
+          lockdown_reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lockdown?: boolean
+          lockdown_at?: string | null
+          lockdown_by?: string | null
+          lockdown_reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lockdown?: boolean
+          lockdown_at?: string | null
+          lockdown_by?: string | null
+          lockdown_reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      slot_reservations: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          group_id: string | null
+          id: string
+          property_id: string
+          released_at: string | null
+          reserved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          group_id?: string | null
+          id?: string
+          property_id: string
+          released_at?: string | null
+          reserved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          group_id?: string | null
+          id?: string
+          property_id?: string
+          released_at?: string | null
+          reserved_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slot_reservations_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "slot_reservations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       states: {
         Row: {
@@ -1512,6 +1671,7 @@ export type Database = {
         Args: { _property_id: string; _user_id: string }
         Returns: boolean
       }
+      is_system_locked: { Args: never; Returns: boolean }
       is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
       log_security_event: {
         Args: {
