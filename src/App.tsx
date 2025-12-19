@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { SuspendedBanner } from "./components/SuspendedBanner";
+import SplineBackground from "./components/SplineBackground";
+import { MouseGlowOverlay } from "./components/MouseGlowOverlay";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
@@ -43,12 +45,15 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Toaster />
-    <Sonner />
-    <SuspendedBanner />
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
+    <div className="relative min-h-screen bg-background">
+      <SplineBackground />
+      <MouseGlowOverlay />
+      <Toaster />
+      <Sonner />
+      <SuspendedBanner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -84,8 +89,9 @@ const App = () => (
         <Route path="/terms-of-service" element={<TermsOfService />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </div>
   </QueryClientProvider>
 );
 
