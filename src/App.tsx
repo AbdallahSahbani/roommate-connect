@@ -45,13 +45,13 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <div className="relative min-h-screen bg-background">
-      <SplineBackground />
-      <MouseGlowOverlay />
-      <Toaster />
-      <Sonner />
-      <SuspendedBanner />
-      <BrowserRouter>
+    <BrowserRouter>
+      <div className="relative min-h-screen bg-background">
+        <SplineBackground />
+        <MouseGlowOverlay />
+        <Toaster />
+        <Sonner />
+        <SuspendedBanner />
         <Routes>
           <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
@@ -90,8 +90,8 @@ const App = () => (
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </div>
+      </div>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
