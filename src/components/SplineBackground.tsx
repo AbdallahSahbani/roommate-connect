@@ -33,7 +33,7 @@ export default function SplineBackground() {
   if (!shouldShow) return null;
   
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
+    <div className="fixed inset-0 z-0 overflow-hidden">
       <iframe
         src="https://my.spline.design/particlesforwebsite-O7wvRpDGjTPGSNAOZLSAKZeC/"
         className="w-full h-full pointer-events-none"
