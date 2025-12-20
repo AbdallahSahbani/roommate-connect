@@ -32,7 +32,7 @@ export function MouseGlowOverlay() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-0 opacity-60"
+      className="pointer-events-none fixed inset-0 z-10 opacity-60"
       style={{
         background: `radial-gradient(600px at ${x}px ${y}px, hsl(var(--primary) / 0.15), transparent 80%)`,
       }}
