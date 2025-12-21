@@ -58,14 +58,19 @@ const itemVariants = {
 const HowItWorksSection = () => {
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-primary">
-      {/* Subtle grid pattern overlay */}
-      <div 
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px'
-        }}
-      />
+      {/* Spline particle animation background */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <iframe
+          src="https://my.spline.design/particlesforwebsite-O7wvRpDGjTPGSNAOZLSAKZeC/"
+          className="w-full h-full pointer-events-none"
+          frameBorder="0"
+          aria-hidden="true"
+          title="Decorative particle animation"
+        />
+      </div>
+      
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-primary/60 z-[1]" />
       
       <div className="container mx-auto max-w-7xl relative z-10">
         <motion.div
