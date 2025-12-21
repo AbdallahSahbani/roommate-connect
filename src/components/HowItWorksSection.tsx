@@ -38,16 +38,17 @@ const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
+      staggerChildren: 0.1,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: {
       duration: 0.5,
       ease: "easeOut" as const,
@@ -57,20 +58,24 @@ const itemVariants = {
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary relative overflow-hidden">
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary opacity-100" />
+    <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary z-0" />
       
-      {/* Subtle grid pattern */}
+      {/* Decorative blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl z-[1]" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-light/20 rounded-full blur-3xl z-[1]" />
+      
+      {/* Grid pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.03] z-[1]"
         style={{
           backgroundImage: `linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px'
+          backgroundSize: '80px 80px'
         }}
       />
       
-      <div className="mx-auto max-w-7xl relative z-10">
+      <div className="container mx-auto max-w-7xl relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -78,11 +83,14 @@ const HowItWorksSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <span className="inline-block px-4 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-sm font-medium mb-4">
+            Simple Process
+          </span>
           <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground tracking-tight mb-4">
-            HOW IT WORKS
+            How It Works
           </h2>
           <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
-            From profile to move-in, we've streamlined every step
+            From profile to move-in, we've streamlined every step of your journey
           </p>
         </motion.div>
 
@@ -95,7 +103,7 @@ const HowItWorksSection = () => {
           className="relative"
         >
           {/* Connection line - desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent -translate-y-1/2 z-0" />
+          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent -translate-y-1/2 z-0" />
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4">
             {steps.map((step) => {
@@ -106,17 +114,17 @@ const HowItWorksSection = () => {
                   variants={itemVariants}
                   className="relative group"
                 >
-                  <div className="flex flex-col items-center text-center p-6 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 h-full">
+                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-primary-foreground/5 border border-primary-foreground/10 backdrop-blur-md hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 h-full hover:-translate-y-2 hover:shadow-xl">
                     {/* Step number badge */}
-                    <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <span className="text-lg font-bold text-accent-foreground">
                         {step.number}
                       </span>
                     </div>
                     
                     {/* Icon */}
-                    <div className="w-14 h-14 rounded-lg bg-primary-foreground/10 flex items-center justify-center mb-4 group-hover:bg-primary-foreground/15 transition-colors duration-300">
-                      <IconComponent className="w-7 h-7 text-primary-foreground" />
+                    <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mb-4 group-hover:bg-primary-foreground/15 transition-colors duration-300">
+                      <IconComponent className="w-8 h-8 text-primary-foreground" />
                     </div>
                     
                     {/* Title */}
@@ -129,13 +137,6 @@ const HowItWorksSection = () => {
                       {step.description}
                     </p>
                   </div>
-                  
-                  {/* Arrow connector - desktop only */}
-                  {step.number < 5 && (
-                    <div className="hidden lg:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10">
-                      <div className="w-4 h-4 rotate-45 border-t-2 border-r-2 border-primary-foreground/30" />
-                    </div>
-                  )}
                 </motion.div>
               );
             })}
