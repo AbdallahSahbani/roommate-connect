@@ -55,8 +55,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Outfit', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['Outfit', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['Syne', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-mesh': 'var(--gradient-mesh)',

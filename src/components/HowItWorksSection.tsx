@@ -80,17 +80,24 @@ const HowItWorksSection = () => {
       {/* Cover for "move your mouse" text - positioned at center */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] w-64 h-24 bg-gradient-radial from-primary via-primary/95 to-transparent blur-sm" />
 
-      {/* OpenAI Animation Video - Bottom Right Corner */}
-      <div className="absolute bottom-4 right-4 z-[15] w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 overflow-hidden opacity-80">
+      {/* OpenAI Animation Video - Bottom Right Corner - Cropped to logo only */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="absolute bottom-8 right-8 z-[15] w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 overflow-hidden opacity-70 hover:opacity-100 transition-opacity duration-300"
+      >
         <video
           src="/videos/openai-animation.mp4"
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-contain"
+          className="w-[400%] h-[400%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ objectPosition: 'center center' }}
         />
-      </div>
+      </motion.div>
 
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Center title - positioned to cover Spline text */}
