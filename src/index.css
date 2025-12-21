@@ -12,47 +12,47 @@
 
 @layer base {
   :root {
-    /* Base colors - warm neutral undertone */
-    --background: 40 15% 96%;
-    --foreground: 220 20% 12%;
+    /* Base colors - lighter, more uplifting */
+    --background: 38 30% 97%;
+    --foreground: 222 22% 12%;
 
     /* Glass card - translucent white */
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 12%;
+    --card-foreground: 222 22% 12%;
 
     /* Popover - solid for readability */
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 12%;
+    --popover-foreground: 222 22% 12%;
 
-    /* Primary - deep charcoal/slate */
-    --primary: 220 25% 18%;
-    --primary-light: 220 20% 30%;
-    --primary-dark: 220 30% 10%;
+    /* Primary - deep modern navy (less heavy) */
+    --primary: 222 40% 22%;
+    --primary-light: 222 34% 32%;
+    --primary-dark: 222 55% 12%;
     --primary-foreground: 0 0% 98%;
 
-    /* Secondary - warm stone */
-    --secondary: 35 15% 88%;
-    --secondary-foreground: 220 20% 20%;
+    /* Secondary - warm sand */
+    --secondary: 36 25% 90%;
+    --secondary-foreground: 222 18% 18%;
 
-    /* Accent - muted copper/bronze */
-    --accent: 25 45% 45%;
+    /* Accent - warm modern orange (more energy) */
+    --accent: 28 80% 52%;
     --accent-foreground: 0 0% 100%;
 
-    /* Muted - subtle warm gray */
-    --muted: 40 10% 90%;
-    --muted-foreground: 220 10% 45%;
+    /* Muted - brighter warm gray */
+    --muted: 38 18% 93%;
+    --muted-foreground: 222 10% 44%;
 
     /* Status colors */
-    --destructive: 0 65% 50%;
+    --destructive: 0 70% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 160 50% 40%;
+    --success: 160 55% 40%;
     --success-foreground: 0 0% 100%;
 
     /* Borders and inputs */
-    --border: 220 15% 85%;
-    --input: 220 12% 90%;
-    --ring: 220 25% 18%;
+    --border: 222 12% 84%;
+    --input: 222 12% 90%;
+    --ring: 222 40% 22%;
 
     --radius: 0.25rem;
 
