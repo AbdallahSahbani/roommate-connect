@@ -76,6 +76,21 @@ const HowItWorksSection = () => {
       {/* Gradient overlay for edges */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary via-transparent to-primary z-[1]" />
       <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-transparent to-primary/80 z-[1]" />
+      
+      {/* Cover for "move your mouse" text - positioned at center */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] w-64 h-24 bg-gradient-radial from-primary via-primary/95 to-transparent blur-sm" />
+
+      {/* OpenAI Animation Video - Bottom Right Corner */}
+      <div className="absolute bottom-4 right-4 z-[15] w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 overflow-hidden opacity-80">
+        <video
+          src="/videos/openai-animation.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-contain"
+        />
+      </div>
 
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Center title - positioned to cover Spline text */}
@@ -89,7 +104,7 @@ const HowItWorksSection = () => {
           <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4 bg-primary/80 backdrop-blur-sm">
             Process
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary-foreground tracking-tight mb-4">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary-foreground tracking-tight mb-4 relative z-[3]">
             How It Works
           </h2>
           <p className="text-primary-foreground/60 text-lg max-w-2xl mx-auto">
