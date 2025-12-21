@@ -77,25 +77,45 @@ const Landing = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
           <div className="max-w-3xl">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="inline-block text-xs tracking-[0.3em] uppercase text-primary-foreground/60 mb-6 font-medium">
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="inline-block text-xs tracking-[0.3em] uppercase text-primary-foreground/60 mb-6 font-medium"
+              >
                 Smart Roommate Matching
-              </span>
+              </motion.span>
               
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-primary-foreground mb-6 leading-[1.05]">
+              <motion.h1 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-primary-foreground mb-6 leading-[1.05]"
+              >
                 Live bigger,
                 <br />
                 pay less.
-              </h1>
+              </motion.h1>
               
-              <p className="text-xl text-primary-foreground/70 max-w-xl leading-relaxed mb-10">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="text-xl text-primary-foreground/70 max-w-xl leading-relaxed mb-10"
+              >
                 Team up with verified roommates and find quality properties. One trusted platform for renters and landlords.
-              </p>
+              </motion.p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
                 <Link to="/properties">
                   <Button size="lg" variant="accent" className="w-full sm:w-auto group">
                     Find a place
@@ -107,7 +127,7 @@ const Landing = () => {
                     I'm a landlord
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -241,10 +261,10 @@ const Landing = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-14"
           >
             <span className="inline-block text-xs tracking-[0.3em] uppercase text-muted-foreground mb-3">Features</span>
@@ -254,18 +274,27 @@ const Landing = () => {
           </motion.div>
           
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-start">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <FeatureCard icon={<Users className="h-5 w-5" />} title="Smart Matching" description="Our algorithm finds roommates who truly match your lifestyle." />
-              <FeatureCard icon={<Shield className="h-5 w-5" />} title="Verified Users" description="ID verification, income checks, and background screening." />
-              <FeatureCard icon={<Home className="h-5 w-5" />} title="Quality Listings" description="Browse verified properties from trusted landlords." />
-              <FeatureCard icon={<CheckCircle className="h-5 w-5" />} title="Group Applications" description="Form groups and apply to properties together." />
-            </div>
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.1 } }
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+            >
+              <FeatureCard icon={<Users className="h-5 w-5" />} title="Smart Matching" description="Our algorithm finds roommates who truly match your lifestyle." index={0} />
+              <FeatureCard icon={<Shield className="h-5 w-5" />} title="Verified Users" description="ID verification, income checks, and background screening." index={1} />
+              <FeatureCard icon={<Home className="h-5 w-5" />} title="Quality Listings" description="Browse verified properties from trusted landlords." index={2} />
+              <FeatureCard icon={<CheckCircle className="h-5 w-5" />} title="Group Applications" description="Form groups and apply to properties together." index={3} />
+            </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              initial={{ opacity: 0, x: 40, scale: 0.95 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             >
               <RentPressureChart />
             </motion.div>
@@ -405,18 +434,22 @@ const Landing = () => {
   );
 };
 
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
+const FeatureCard = ({ icon, title, description, index = 0 }: { icon: React.ReactNode; title: string; description: string; index?: number }) => (
   <motion.div
-    initial={{ opacity: 0, y: 15 }}
-    whileInView={{ opacity: 1, y: 0 }}
+    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+    whileInView={{ opacity: 1, y: 0, scale: 1 }}
     viewport={{ once: true }}
-    transition={{ duration: 0.4 }}
-    className="glass-card p-6 group"
+    transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+    className="glass-card p-6 group hover:bg-card/80 transition-all duration-300"
   >
-    <div className="w-10 h-10 bg-primary flex items-center justify-center text-primary-foreground mb-4 group-hover:bg-accent transition-colors duration-200">
+    <motion.div 
+      whileHover={{ scale: 1.1, rotate: 5 }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      className="w-10 h-10 bg-accent/10 flex items-center justify-center mb-4 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300"
+    >
       {icon}
-    </div>
-    <h3 className="text-base font-medium mb-2 text-foreground">{title}</h3>
+    </motion.div>
+    <h3 className="text-sm font-medium text-foreground mb-2 tracking-wide">{title}</h3>
     <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
   </motion.div>
 );
