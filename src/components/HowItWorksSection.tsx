@@ -75,10 +75,11 @@ const HowItWorksSection = () => {
       
       {/* Gradient overlay for edges */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary via-transparent to-primary z-[1]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-transparent to-primary/80 z-[1]" />
-      
-      {/* Cover for "move your mouse" text - positioned at center */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] w-64 h-24 bg-gradient-radial from-primary via-primary/95 to-transparent blur-sm" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/70 via-transparent to-primary/70 z-[1]" />
+
+      {/* Cover for Spline UI text (e.g. "move your mouse") */}
+      <div className="pointer-events-none absolute left-6 bottom-6 z-[2] h-14 w-48 bg-primary/85 backdrop-blur-md" />
+      <div className="pointer-events-none absolute left-6 top-6 z-[2] h-14 w-48 bg-primary/85 backdrop-blur-md" />
 
       {/* OpenAI Animation Video - Bottom Right Corner - Cropped to logo only */}
       <motion.div 

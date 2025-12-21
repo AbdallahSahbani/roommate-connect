@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { SuspendedBanner } from "./components/SuspendedBanner";
-import SplineBackground from "./components/SplineBackground";
 import { MouseGlowOverlay } from "./components/MouseGlowOverlay";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
@@ -47,7 +46,6 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <div className="relative isolate min-h-screen bg-background">
-        <SplineBackground />
         <MouseGlowOverlay />
 
         <div className="relative z-20">
