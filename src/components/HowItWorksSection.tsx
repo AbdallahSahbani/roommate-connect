@@ -73,21 +73,23 @@ const HowItWorksSection = () => {
         />
       </div>
       
-      {/* Gradient overlay for edges */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary via-transparent to-primary z-[1]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/70 via-transparent to-primary/70 z-[1]" />
+      {/* Full overlay to cover Spline UI completely */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary via-primary/40 to-primary z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary via-transparent to-primary z-[1]" />
 
-      {/* Cover for Spline UI text (e.g. "move your mouse") */}
-      <div className="pointer-events-none absolute left-6 bottom-6 z-[2] h-14 w-48 bg-primary/85 backdrop-blur-md" />
-      <div className="pointer-events-none absolute left-6 top-6 z-[2] h-14 w-48 bg-primary/85 backdrop-blur-md" />
+      {/* Solid covers for Spline UI elements - corners and edges */}
+      <div className="pointer-events-none absolute left-0 bottom-0 z-[2] h-24 w-64 bg-primary" />
+      <div className="pointer-events-none absolute left-0 top-0 z-[2] h-20 w-56 bg-primary" />
+      <div className="pointer-events-none absolute right-0 bottom-0 z-[2] h-20 w-56 bg-primary" />
+      <div className="pointer-events-none absolute right-0 top-0 z-[2] h-20 w-56 bg-primary" />
 
-      {/* OpenAI Animation Video - Bottom Right Corner - Cropped to logo only */}
+      {/* OpenAI Animation Video - Bottom Right Corner */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="absolute bottom-8 right-8 z-[15] w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 overflow-hidden opacity-70 hover:opacity-100 transition-opacity duration-300"
+        className="absolute bottom-6 right-6 z-[15] w-14 h-14 md:w-18 md:h-18 lg:w-20 lg:h-20 overflow-hidden opacity-60 hover:opacity-100 transition-opacity duration-300 rounded-lg"
       >
         <video
           src="/videos/openai-animation.mp4"
@@ -101,7 +103,7 @@ const HowItWorksSection = () => {
       </motion.div>
 
       <div className="container mx-auto max-w-7xl relative z-10">
-        {/* Center title - positioned to cover Spline text */}
+        {/* Center title */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -109,7 +111,7 @@ const HowItWorksSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
         >
-          <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4 bg-primary/80 backdrop-blur-sm">
+          <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4 bg-primary/80 backdrop-blur-sm rounded-full">
             Process
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary-foreground tracking-tight mb-4 relative z-[3]">
@@ -136,11 +138,12 @@ const HowItWorksSection = () => {
                 <motion.div
                   key={step.number}
                   variants={itemVariants}
-                  className="group"
+                  whileHover={{ scale: 1.02, x: 8 }}
+                  className="group cursor-pointer"
                 >
-                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/15 hover:border-primary-foreground/25 transition-all duration-300 backdrop-blur-sm rounded-xl">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                      <div className="w-12 h-12 bg-accent flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300">
                         <span className="text-lg font-semibold text-accent-foreground">
                           {step.number}
                         </span>
@@ -148,7 +151,7 @@ const HowItWorksSection = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <IconComponent className="w-5 h-5 text-primary-foreground/70" />
+                        <IconComponent className="w-5 h-5 text-primary-foreground/70 group-hover:text-accent transition-colors" />
                         <h3 className="text-base font-medium text-primary-foreground tracking-wide">
                           {step.title}
                         </h3>
@@ -176,11 +179,12 @@ const HowItWorksSection = () => {
                 <motion.div
                   key={step.number}
                   variants={itemVariants}
-                  className="group"
+                  whileHover={{ scale: 1.02, x: -8 }}
+                  className="group cursor-pointer"
                 >
-                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/15 hover:border-primary-foreground/25 transition-all duration-300 backdrop-blur-sm rounded-xl">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                      <div className="w-12 h-12 bg-accent flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300">
                         <span className="text-lg font-semibold text-accent-foreground">
                           {step.number}
                         </span>
@@ -188,7 +192,7 @@ const HowItWorksSection = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <IconComponent className="w-5 h-5 text-primary-foreground/70" />
+                        <IconComponent className="w-5 h-5 text-primary-foreground/70 group-hover:text-accent transition-colors" />
                         <h3 className="text-base font-medium text-primary-foreground tracking-wide">
                           {step.title}
                         </h3>
@@ -212,10 +216,14 @@ const HowItWorksSection = () => {
           viewport={{ once: true, margin: "-50px" }}
           className="mt-8 max-w-md mx-auto"
         >
-          <motion.div variants={itemVariants} className="group">
-            <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+          <motion.div 
+            variants={itemVariants} 
+            whileHover={{ scale: 1.03, y: -4 }}
+            className="group cursor-pointer"
+          >
+            <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/15 hover:border-primary-foreground/25 transition-all duration-300 backdrop-blur-sm rounded-xl">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                <div className="w-12 h-12 bg-accent flex items-center justify-center rounded-lg group-hover:scale-110 transition-transform duration-300">
                   <span className="text-lg font-semibold text-accent-foreground">
                     {bottomStep.number}
                   </span>
@@ -223,7 +231,7 @@ const HowItWorksSection = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <bottomStep.icon className="w-5 h-5 text-primary-foreground/70" />
+                  <bottomStep.icon className="w-5 h-5 text-primary-foreground/70 group-hover:text-accent transition-colors" />
                   <h3 className="text-base font-medium text-primary-foreground tracking-wide">
                     {bottomStep.title}
                   </h3>

@@ -1,26 +1,8 @@
-import { supabase } from "@/integrations/supabase/client";
-import { seedProperties } from "@/data/seedProperties";
+// Seeding removed - Properties must be added by landlords to comply with RLS policies
+// This file is kept for backwards compatibility but does nothing
 
 export async function seedPropertiesIfEmpty() {
-  const { data, error } = await supabase
-    .from("properties")
-    .select("id")
-    .limit(1);
-
-  if (error) {
-    console.error("Error checking properties:", error);
-    return;
-  }
-
-  if (data && data.length > 0) return;
-
-  const { error: insertError } = await supabase.from("properties").insert(
-    seedProperties
-  );
-
-  if (insertError) {
-    console.error("Error seeding properties:", insertError);
-  } else {
-    console.log("Seeded initial properties.");
-  }
+  // No-op: Properties should be created by authenticated landlords
+  // The previous implementation violated RLS policies
+  return;
 }
