@@ -44,13 +44,12 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.5,
+      duration: 0.4,
       ease: "easeOut" as const,
     },
   },
@@ -58,20 +57,13 @@ const itemVariants = {
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary z-0" />
-      
-      {/* Decorative blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl z-[1]" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-light/20 rounded-full blur-3xl z-[1]" />
-      
-      {/* Grid pattern overlay */}
+    <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-primary">
+      {/* Subtle grid pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03] z-[1]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage: `linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
+          backgroundSize: '60px 60px'
         }}
       />
       
@@ -80,17 +72,17 @@ const HowItWorksSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-sm font-medium mb-4">
-            Simple Process
+          <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4">
+            Process
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground tracking-tight mb-4">
+          <h2 className="text-3xl md:text-4xl font-semibold text-primary-foreground tracking-tight mb-4">
             How It Works
           </h2>
-          <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
-            From profile to move-in, we've streamlined every step of your journey
+          <p className="text-primary-foreground/60 text-lg max-w-2xl mx-auto">
+            From profile to move-in, we've streamlined every step
           </p>
         </motion.div>
 
@@ -103,7 +95,7 @@ const HowItWorksSection = () => {
           className="relative"
         >
           {/* Connection line - desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent -translate-y-1/2 z-0" />
+          <div className="hidden lg:block absolute top-24 left-[10%] right-[10%] h-px bg-primary-foreground/15 z-0" />
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4">
             {steps.map((step) => {
@@ -114,26 +106,26 @@ const HowItWorksSection = () => {
                   variants={itemVariants}
                   className="relative group"
                 >
-                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-primary-foreground/5 border border-primary-foreground/10 backdrop-blur-md hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 h-full hover:-translate-y-2 hover:shadow-xl">
+                  <div className="flex flex-col items-center text-center p-6 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/8 hover:border-primary-foreground/20 transition-all duration-200 h-full">
                     {/* Step number badge */}
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-lg font-bold text-accent-foreground">
+                    <div className="w-10 h-10 bg-accent flex items-center justify-center mb-4 shadow-sm">
+                      <span className="text-sm font-semibold text-accent-foreground">
                         {step.number}
                       </span>
                     </div>
                     
                     {/* Icon */}
-                    <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mb-4 group-hover:bg-primary-foreground/15 transition-colors duration-300">
-                      <IconComponent className="w-8 h-8 text-primary-foreground" />
+                    <div className="w-14 h-14 border border-primary-foreground/15 flex items-center justify-center mb-4 group-hover:border-primary-foreground/25 transition-colors duration-200">
+                      <IconComponent className="w-6 h-6 text-primary-foreground/80" />
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-lg font-semibold text-primary-foreground mb-2">
+                    <h3 className="text-base font-medium text-primary-foreground mb-2 tracking-wide">
                       {step.title}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-sm text-primary-foreground/70 leading-relaxed">
+                    <p className="text-sm text-primary-foreground/60 leading-relaxed">
                       {step.description}
                     </p>
                   </div>

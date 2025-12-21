@@ -24,22 +24,24 @@ export const Navigation = () => {
     }
   };
 
+  const navButtonClass = "text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10 font-medium rounded-none tracking-wide";
+
   return (
-    <nav className="glass-nav sticky top-0 z-50 shadow-lg">
+    <nav className="glass-nav sticky top-0 z-50 shadow-card border-b border-primary-foreground/10">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           <Link to="/" className="flex items-center gap-3 group">
             <img 
               src={logo} 
               alt="Roomates Logo" 
-              className="h-10 w-auto group-hover:scale-110 transition-all duration-300 filter drop-shadow-lg object-contain" 
+              className="h-9 w-auto group-hover:opacity-80 transition-opacity duration-200 filter drop-shadow object-contain" 
             />
-            <span className="font-bold text-xl text-primary-foreground tracking-tight">Roomates</span>
+            <span className="font-semibold text-lg text-primary-foreground tracking-wide uppercase">Roomates</span>
           </Link>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             {/* Home - always visible */}
-            <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+            <Button variant="ghost" size="sm" asChild className={navButtonClass}>
               <Link to="/">
                 <Home className="h-4 w-4 mr-2" />
                 Home
@@ -53,61 +55,61 @@ export const Navigation = () => {
               </Button>
             ) : (
               <>
-                {/* LANDLORD ACCOUNT - Landlords see ONLY landlord tabs */}
+                {/* LANDLORD ACCOUNT */}
                 {isLandlord && (
                   <>
-                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                    <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                       <Link to="/landlord/dashboard">
                         <Building className="h-4 w-4 mr-2" />
                         Dashboard
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                    <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                       <Link to="/landlord/listings">
                         <Building2 className="h-4 w-4 mr-2" />
-                        My Listings
+                        Listings
                       </Link>
                     </Button>
                   </>
                 )}
 
-                {/* RENTER ACCOUNT - Renters see ONLY renter tabs */}
+                {/* RENTER ACCOUNT */}
                 {isRenter && !isLandlord && (
                   <>
-                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                    <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                       <Link to="/properties">
                         <Building2 className="h-4 w-4 mr-2" />
-                        Browse Properties
+                        Properties
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                    <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                       <Link to="/roommate-swipe">
                         <Heart className="h-4 w-4 mr-2" />
-                        Find Roommates
+                        Roommates
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                    <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                       <Link to="/groups">
                         <Users className="h-4 w-4 mr-2" />
-                        My Groups
+                        Groups
                       </Link>
                     </Button>
                   </>
                 )}
 
-                {/* For users without roles or not logged in - show browse only */}
+                {/* For users without roles */}
                 {!isRenter && !isLandlord && !isAdmin && (
-                  <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                  <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                     <Link to="/properties">
                       <Building2 className="h-4 w-4 mr-2" />
-                      Browse Properties
+                      Properties
                     </Link>
                   </Button>
                 )}
 
-                {/* Admin menu - only for admins */}
+                {/* Admin menu */}
                 {isAdmin && (
-                  <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+                  <Button variant="ghost" size="sm" asChild className={navButtonClass}>
                     <Link to="/admin">
                       <Shield className="h-4 w-4 mr-2" />
                       Admin
@@ -117,20 +119,20 @@ export const Navigation = () => {
               </>
             )}
             
-            {/* Common navigation - always visible for authenticated users */}
-            <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+            {/* Common navigation */}
+            <Button variant="ghost" size="sm" asChild className={navButtonClass}>
               <Link to="/messages">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" asChild className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+            <Button variant="ghost" size="sm" asChild className={navButtonClass}>
               <Link to="/profile-setup">
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/15 font-medium rounded-xl">
+            <Button variant="ghost" size="sm" onClick={handleLogout} className={navButtonClass}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
