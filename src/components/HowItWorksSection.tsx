@@ -38,52 +38,58 @@ const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.4,
+      duration: 0.5,
       ease: "easeOut" as const,
     },
   },
 };
 
 const HowItWorksSection = () => {
+  const leftSteps = steps.slice(0, 2);
+  const rightSteps = steps.slice(2, 4);
+  const bottomStep = steps[4];
+
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-primary">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-primary min-h-[900px]">
       {/* Spline particle animation background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <iframe
           src="https://my.spline.design/particlesforwebsite-O7wvRpDGjTPGSNAOZLSAKZeC/"
-          className="w-full h-full pointer-events-none"
+          className="w-full h-full pointer-events-none scale-110"
           frameBorder="0"
           aria-hidden="true"
           title="Decorative particle animation"
         />
       </div>
       
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-primary/60 z-[1]" />
-      
+      {/* Gradient overlay for edges */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary via-transparent to-primary z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-transparent to-primary/80 z-[1]" />
+
       <div className="container mx-auto max-w-7xl relative z-10">
+        {/* Center title - positioned to cover Spline text */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
         >
-          <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4">
+          <span className="inline-block px-4 py-1.5 border border-primary-foreground/20 text-primary-foreground/80 text-xs font-medium tracking-widest uppercase mb-4 bg-primary/80 backdrop-blur-sm">
             Process
           </span>
-          <h2 className="text-3xl md:text-4xl font-semibold text-primary-foreground tracking-tight mb-4">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-primary-foreground tracking-tight mb-4">
             How It Works
           </h2>
           <p className="text-primary-foreground/60 text-lg max-w-2xl mx-auto">
@@ -91,53 +97,120 @@ const HowItWorksSection = () => {
           </p>
         </motion.div>
 
-        {/* Steps container */}
+        {/* Steps arranged around animation */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="relative"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start mt-16"
         >
-          {/* Connection line - desktop */}
-          <div className="hidden lg:block absolute top-24 left-[10%] right-[10%] h-px bg-primary-foreground/15 z-0" />
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4">
-            {steps.map((step) => {
+          {/* Left column - Steps 1 & 2 */}
+          <div className="flex flex-col gap-6 lg:pt-12">
+            {leftSteps.map((step) => {
               const IconComponent = step.icon;
               return (
                 <motion.div
                   key={step.number}
                   variants={itemVariants}
-                  className="relative group"
+                  className="group"
                 >
-                  <div className="flex flex-col items-center text-center p-6 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/8 hover:border-primary-foreground/20 transition-all duration-200 h-full">
-                    {/* Step number badge */}
-                    <div className="w-10 h-10 bg-accent flex items-center justify-center mb-4 shadow-sm">
-                      <span className="text-sm font-semibold text-accent-foreground">
-                        {step.number}
-                      </span>
+                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                        <span className="text-lg font-semibold text-accent-foreground">
+                          {step.number}
+                        </span>
+                      </div>
                     </div>
-                    
-                    {/* Icon */}
-                    <div className="w-14 h-14 border border-primary-foreground/15 flex items-center justify-center mb-4 group-hover:border-primary-foreground/25 transition-colors duration-200">
-                      <IconComponent className="w-6 h-6 text-primary-foreground/80" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <IconComponent className="w-5 h-5 text-primary-foreground/70" />
+                        <h3 className="text-base font-medium text-primary-foreground tracking-wide">
+                          {step.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-primary-foreground/60 leading-relaxed">
+                        {step.description}
+                      </p>
                     </div>
-                    
-                    {/* Title */}
-                    <h3 className="text-base font-medium text-primary-foreground mb-2 tracking-wide">
-                      {step.title}
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-sm text-primary-foreground/60 leading-relaxed">
-                      {step.description}
-                    </p>
                   </div>
                 </motion.div>
               );
             })}
           </div>
+
+          {/* Center - Empty space for animation visibility */}
+          <div className="hidden lg:flex items-center justify-center min-h-[300px]">
+            {/* Animation shows through here */}
+          </div>
+
+          {/* Right column - Steps 3 & 4 */}
+          <div className="flex flex-col gap-6 lg:pt-12">
+            {rightSteps.map((step) => {
+              const IconComponent = step.icon;
+              return (
+                <motion.div
+                  key={step.number}
+                  variants={itemVariants}
+                  className="group"
+                >
+                  <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                        <span className="text-lg font-semibold text-accent-foreground">
+                          {step.number}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <IconComponent className="w-5 h-5 text-primary-foreground/70" />
+                        <h3 className="text-base font-medium text-primary-foreground tracking-wide">
+                          {step.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-primary-foreground/60 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Bottom step - Step 5 centered */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="mt-8 max-w-md mx-auto"
+        >
+          <motion.div variants={itemVariants} className="group">
+            <div className="flex items-start gap-4 p-5 bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-300 backdrop-blur-sm">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-accent flex items-center justify-center">
+                  <span className="text-lg font-semibold text-accent-foreground">
+                    {bottomStep.number}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <bottomStep.icon className="w-5 h-5 text-primary-foreground/70" />
+                  <h3 className="text-base font-medium text-primary-foreground tracking-wide">
+                    {bottomStep.title}
+                  </h3>
+                </div>
+                <p className="text-sm text-primary-foreground/60 leading-relaxed">
+                  {bottomStep.description}
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
