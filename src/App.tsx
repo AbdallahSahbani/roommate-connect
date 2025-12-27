@@ -1,135 +1,111 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import { SuspendedBanner } from "./components/SuspendedBanner";
-import { AnimatePresence, motion } from "framer-motion";
-import { AppShell } from "./components/AppShell";
-import Landing from "./pages/Landing";
-import Auth from "./pages/Auth";
-import ProfileSetup from "./pages/ProfileSetup";
-import DashboardNew from "./pages/DashboardNew";
-import BrowseNew from "./pages/BrowseNew";
-import Properties3D from "./pages/Properties3D";
-import { RentForecast } from "./pages/RentForecast";
-import PropertyDetail from "./pages/PropertyDetail";
-import Groups from "./pages/Groups";
-import GroupDetail from "./pages/GroupDetail";
-import LandlordListings from "./pages/LandlordListings";
-import LandlordListingForm from "./pages/LandlordListingForm";
-import Messages from "./pages/Messages";
-import Verification from "./pages/Verification";
-import Subscription from "./pages/Subscription";
-import IncomeVerification from "./pages/IncomeVerification";
-import Careers from "./pages/Careers";
-import Contact from "./pages/Contact";
-import Board from "./pages/Board";
-import NotFound from "./pages/NotFound";
-import LandlordDashboard from "./pages/landlord/LandlordDashboard";
-import LandlordListingsPage from "./pages/landlord/LandlordListings";
-import RoommateSwipe from "./pages/RoommateSwipe";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { RequireAuth, RequireRole } from "./routes/guards";
+
+/* ---------- Public ---------- */
+import Landing from "./pages/public/Landing";
+import Login from "./pages/public/Login";
+import Careers from "./pages/public/Careers";
+import Contact from "./pages/public/Contact";
+import Board from "./pages/public/Board";
+import Privacy from "./pages/public/Privacy";
+import Terms from "./pages/public/Terms";
+import BecomeLandlord from "./pages/public/BecomeLandlord";
+import { RentForecast } from "./pages/public/RentForecast";
+
+/* ---------- User ---------- */
+import Dashboard from "./pages/user/Dashboard";
+import ProfileSetup from "./pages/user/ProfileSetup";
+import Browse from "./pages/user/Browse";
+import Properties from "./pages/user/Properties";
+import PropertyDetail from "./pages/user/PropertyDetail";
+import Groups from "./pages/user/Groups";
+import GroupDetail from "./pages/user/GroupDetail";
+import Messages from "./pages/user/Messages";
+import Verification from "./pages/user/Verification";
+import Subscription from "./pages/user/Subscription";
+import IncomeVerification from "./pages/user/IncomeVerification";
+import Swipe from "./pages/user/Swipe";
 import Subscribe from "./pages/Subscribe";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminVerifications from "./pages/admin/AdminVerifications";
-import AdminLogs from "./pages/admin/AdminLogs";
-import AdminProperties from "./pages/admin/AdminProperties";
-import AdminAbuse from "./pages/admin/AdminAbuse";
-import LandlordApplications from "./pages/landlord/LandlordApplications";
-import LandlordAssistant from "./pages/landlord/LandlordAssistant";
-import BecomeLandlord from "./pages/BecomeLandlord";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
+
+/* ---------- Landlord ---------- */
+import LandlordDashboard from "./pages/landlord/Dashboard";
+import Listings from "./pages/landlord/Listings";
+import Assistant from "./pages/landlord/Assistant";
+import NewListing from "./pages/landlord/NewListing";
+import Applications from "./pages/landlord/Applications";
+
+/* ---------- Admin ---------- */
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminVerifications from "./pages/admin/Verifications";
+import AdminLogs from "./pages/admin/Logs";
+import AdminProperties from "./pages/admin/Properties";
+import Abuse from "./pages/admin/Abuse";
+
+/* ---------- Fallback ---------- */
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const pageTransition = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-  transition: { duration: 0.25, ease: "easeOut" as const }
-};
-
-const AnimatedRoutes = () => {
-  const location = useLocation();
-  
+export default function App() {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={pageTransition.initial}
-        animate={pageTransition.animate}
-        exit={pageTransition.exit}
-        transition={pageTransition.transition}
-        className="min-h-screen"
-      >
-        <Routes location={location}>
-          {/* Public routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/board" element={<Board />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/become-landlord" element={<BecomeLandlord />} />
-          <Route path="/rent-forecast" element={<RentForecast />} />
-          
-          {/* Protected routes with AppShell */}
-          <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
-            <Route path="/dashboard" element={<DashboardNew />} />
-            <Route path="/profile-setup" element={<ProfileSetup />} />
-            <Route path="/browse" element={<BrowseNew />} />
-            <Route path="/properties" element={<Properties3D />} />
-            <Route path="/properties/:id" element={<PropertyDetail />} />
-            <Route path="/groups" element={<Groups />} />
-            <Route path="/groups/:id" element={<GroupDetail />} />
-            <Route path="/messages/:conversationId?" element={<Messages />} />
-            <Route path="/verification" element={<Verification />} />
-            <Route path="/subscription" element={<Subscription />} />
-            <Route path="/income-verification" element={<IncomeVerification />} />
-            <Route path="/roommate-swipe" element={<RoommateSwipe />} />
-            <Route path="/roommates/swipe" element={<RoommateSwipe />} />
-            <Route path="/subscribe" element={<Subscribe />} />
-          </Route>
-          
-          {/* Landlord routes */}
-          <Route path="/landlord/dashboard" element={<ProtectedRoute requireLandlord><LandlordDashboard /></ProtectedRoute>} />
-          <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
-          <Route path="/landlord/assistant" element={<ProtectedRoute requireLandlord><LandlordAssistant /></ProtectedRoute>} />
-          <Route path="/landlord/listings/new" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
-          <Route path="/landlord/listings/:id/edit" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
-          <Route path="/landlord/applications/:propertyId" element={<ProtectedRoute requireLandlord><LandlordApplications /></ProtectedRoute>} />
-          
-          {/* Admin routes */}
-          <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
-          <Route path="/admin/verifications" element={<ProtectedRoute requireAdmin><AdminVerifications /></ProtectedRoute>} />
-          <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
-          <Route path="/admin/properties" element={<ProtectedRoute requireAdmin><AdminProperties /></ProtectedRoute>} />
-          <Route path="/admin/abuse" element={<ProtectedRoute requireAdmin><AdminAbuse /></ProtectedRoute>} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <div className="relative isolate min-h-screen bg-slate-950">
-        <div className="relative z-20">
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <div className="relative isolate min-h-screen bg-[#0B0D10]">
           <Toaster />
           <Sonner />
-          <SuspendedBanner />
-          <AnimatedRoutes />
-        </div>
-      </div>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
+          <Routes>
+            {/* PUBLIC */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/board" element={<Board />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/become-landlord" element={<BecomeLandlord />} />
+            <Route path="/rent-forecast" element={<RentForecast />} />
 
-export default App;
+            {/* USER */}
+            <Route path="/app" element={<RequireAuth><Dashboard /></RequireAuth>} />
+            <Route path="/app/profile-setup" element={<RequireAuth><ProfileSetup /></RequireAuth>} />
+            <Route path="/app/browse" element={<RequireAuth><Browse /></RequireAuth>} />
+            <Route path="/app/properties" element={<RequireAuth><Properties /></RequireAuth>} />
+            <Route path="/app/properties/:id" element={<RequireAuth><PropertyDetail /></RequireAuth>} />
+            <Route path="/app/groups" element={<RequireAuth><Groups /></RequireAuth>} />
+            <Route path="/app/groups/:id" element={<RequireAuth><GroupDetail /></RequireAuth>} />
+            <Route path="/app/messages" element={<RequireAuth><Messages /></RequireAuth>} />
+            <Route path="/app/verification" element={<RequireAuth><Verification /></RequireAuth>} />
+            <Route path="/app/subscription" element={<RequireAuth><Subscription /></RequireAuth>} />
+            <Route path="/app/income-verification" element={<RequireAuth><IncomeVerification /></RequireAuth>} />
+            <Route path="/app/swipe" element={<RequireAuth><Swipe /></RequireAuth>} />
+            <Route path="/app/swipe/:mode" element={<RequireAuth><Swipe /></RequireAuth>} />
+            <Route path="/app/subscribe" element={<RequireAuth><Subscribe /></RequireAuth>} />
+
+            {/* LANDLORD */}
+            <Route path="/landlord" element={<RequireAuth><RequireRole role="landlord"><LandlordDashboard /></RequireRole></RequireAuth>} />
+            <Route path="/landlord/listings" element={<RequireAuth><RequireRole role="landlord"><Listings /></RequireRole></RequireAuth>} />
+            <Route path="/landlord/assistant" element={<RequireAuth><RequireRole role="landlord"><Assistant /></RequireRole></RequireAuth>} />
+            <Route path="/landlord/new" element={<RequireAuth><RequireRole role="landlord"><NewListing /></RequireRole></RequireAuth>} />
+            <Route path="/landlord/edit/:id" element={<RequireAuth><RequireRole role="landlord"><NewListing /></RequireRole></RequireAuth>} />
+            <Route path="/landlord/applications" element={<RequireAuth><RequireRole role="landlord"><Applications /></RequireRole></RequireAuth>} />
+
+            {/* ADMIN */}
+            <Route path="/admin" element={<RequireAuth><RequireRole role="admin"><AdminDashboard /></RequireRole></RequireAuth>} />
+            <Route path="/admin/users" element={<RequireAuth><RequireRole role="admin"><AdminUsers /></RequireRole></RequireAuth>} />
+            <Route path="/admin/verifications" element={<RequireAuth><RequireRole role="admin"><AdminVerifications /></RequireRole></RequireAuth>} />
+            <Route path="/admin/logs" element={<RequireAuth><RequireRole role="admin"><AdminLogs /></RequireRole></RequireAuth>} />
+            <Route path="/admin/properties" element={<RequireAuth><RequireRole role="admin"><AdminProperties /></RequireRole></RequireAuth>} />
+            <Route path="/admin/abuse" element={<RequireAuth><RequireRole role="admin"><Abuse /></RequireRole></RequireAuth>} />
+
+            {/* FALLBACK */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}
