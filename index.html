@@ -1,25 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Roomates - Live Bigger with Less</title>
+    <title>Roomates - AI-Powered Roommate Matching</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <meta name="description" content="Find your perfect shared living space with Roomates. Browse verified rentals, match with compatible roommates, and live bigger with less. Smart search, verified listings." />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="description" content="AI-powered roommate matching platform. Find compatible roommates using advanced algorithms. The future of shared living." />
     <meta name="author" content="Roomates" />
     <link rel="canonical" href="https://roomates.app" />
 
-    <meta property="og:title" content="Roomates - Live Bigger with Less" />
-    <meta property="og:description" content="Smart roommate matching and rental search platform. Find compatible roommates and verified properties. Live bigger with less." />
+    <meta property="og:title" content="Roomates - AI-Powered Roommate Matching" />
+    <meta property="og:description" content="The future of shared living. AI-powered matching, verified profiles, and seamless connections." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Roomates - Live Bigger with Less" />
-    <meta name="twitter:description" content="Find compatible roommates and verified rental properties. Smart search and matching algorithm." />
+    <meta name="twitter:title" content="Roomates - AI-Powered Roommate Matching" />
+    <meta name="twitter:description" content="The future of shared living. AI-powered matching, verified profiles, and seamless connections." />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <style>
+      /* Preloader styles */
+      .preloader {
+        position: fixed;
+        inset: 0;
+        background: #0a0a0f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      .preloader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
   </head>
 
   <body>
