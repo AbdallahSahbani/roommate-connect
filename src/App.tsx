@@ -5,12 +5,13 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { SuspendedBanner } from "./components/SuspendedBanner";
 import { AnimatePresence, motion } from "framer-motion";
+import { AppShell } from "./components/AppShell";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
-import Dashboard from "./pages/Dashboard";
-import Browse from "./pages/Browse";
-import Properties from "./pages/Properties";
+import DashboardNew from "./pages/DashboardNew";
+import BrowseNew from "./pages/BrowseNew";
+import Properties3D from "./pages/Properties3D";
 import PropertyDetail from "./pages/PropertyDetail";
 import Groups from "./pages/Groups";
 import GroupDetail from "./pages/GroupDetail";
@@ -60,42 +61,53 @@ const AnimatedRoutes = () => {
         animate={pageTransition.animate}
         exit={pageTransition.exit}
         transition={pageTransition.transition}
+        className="min-h-screen"
       >
         <Routes location={location}>
+          {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/properties" element={<Properties />} />
-          <Route path="/properties/:id" element={<PropertyDetail />} />
-          <Route path="/groups" element={<ProtectedRoute requireRenter><Groups /></ProtectedRoute>} />
-          <Route path="/groups/:id" element={<ProtectedRoute requireRenter><GroupDetail /></ProtectedRoute>} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/board" element={<Board />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/become-landlord" element={<BecomeLandlord />} />
+          
+          {/* Protected routes with AppShell */}
+          <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
+            <Route path="/dashboard" element={<DashboardNew />} />
+            <Route path="/profile-setup" element={<ProfileSetup />} />
+            <Route path="/browse" element={<BrowseNew />} />
+            <Route path="/properties" element={<Properties3D />} />
+            <Route path="/properties/:id" element={<PropertyDetail />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/groups/:id" element={<GroupDetail />} />
+            <Route path="/messages/:conversationId?" element={<Messages />} />
+            <Route path="/verification" element={<Verification />} />
+            <Route path="/subscription" element={<Subscription />} />
+            <Route path="/income-verification" element={<IncomeVerification />} />
+            <Route path="/roommate-swipe" element={<RoommateSwipe />} />
+            <Route path="/roommates/swipe" element={<RoommateSwipe />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+          </Route>
+          
+          {/* Landlord routes */}
           <Route path="/landlord/dashboard" element={<ProtectedRoute requireLandlord><LandlordDashboard /></ProtectedRoute>} />
           <Route path="/landlord/listings" element={<ProtectedRoute requireLandlord><LandlordListingsPage /></ProtectedRoute>} />
           <Route path="/landlord/assistant" element={<ProtectedRoute requireLandlord><LandlordAssistant /></ProtectedRoute>} />
           <Route path="/landlord/listings/new" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
           <Route path="/landlord/listings/:id/edit" element={<ProtectedRoute requireLandlord><LandlordListingForm /></ProtectedRoute>} />
           <Route path="/landlord/applications/:propertyId" element={<ProtectedRoute requireLandlord><LandlordApplications /></ProtectedRoute>} />
-          <Route path="/messages/:conversationId?" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-          <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
-          <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
-          <Route path="/income-verification" element={<ProtectedRoute><IncomeVerification /></ProtectedRoute>} />
-          <Route path="/roommate-swipe" element={<ProtectedRoute requireRenter><RoommateSwipe /></ProtectedRoute>} />
-          <Route path="/roommates/swipe" element={<ProtectedRoute requireRenter><RoommateSwipe /></ProtectedRoute>} />
-          <Route path="/subscribe" element={<ProtectedRoute><Subscribe /></ProtectedRoute>} />
+          
+          {/* Admin routes */}
           <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/verifications" element={<ProtectedRoute requireAdmin><AdminVerifications /></ProtectedRoute>} />
           <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
           <Route path="/admin/properties" element={<ProtectedRoute requireAdmin><AdminProperties /></ProtectedRoute>} />
           <Route path="/admin/abuse" element={<ProtectedRoute requireAdmin><AdminAbuse /></ProtectedRoute>} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/board" element={<Board />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
@@ -106,7 +118,7 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <div className="relative isolate min-h-screen bg-background">
+      <div className="relative isolate min-h-screen bg-slate-950">
         <div className="relative z-20">
           <Toaster />
           <Sonner />
