@@ -12,6 +12,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import DashboardNew from "./pages/DashboardNew";
 import BrowseNew from "./pages/BrowseNew";
 import Properties3D from "./pages/Properties3D";
+import { RentForecast } from "./pages/RentForecast";
 import PropertyDetail from "./pages/PropertyDetail";
 import Groups from "./pages/Groups";
 import GroupDetail from "./pages/GroupDetail";
@@ -73,6 +74,7 @@ const AnimatedRoutes = () => {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/become-landlord" element={<BecomeLandlord />} />
+          <Route path="/rent-forecast" element={<RentForecast />} />
           
           {/* Protected routes with AppShell */}
           <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
