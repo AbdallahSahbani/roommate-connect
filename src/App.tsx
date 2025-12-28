@@ -70,7 +70,7 @@ export default function App() {
             <Route path="/become-landlord" element={<BecomeLandlord />} />
             <Route path="/rent-forecast" element={<RentForecast />} />
 
-            {/* USER */}
+            {/* USER - New routes */}
             <Route path="/app" element={<RequireAuth><Dashboard /></RequireAuth>} />
             <Route path="/app/profile-setup" element={<RequireAuth><ProfileSetup /></RequireAuth>} />
             <Route path="/app/browse" element={<RequireAuth><Browse /></RequireAuth>} />
@@ -85,6 +85,22 @@ export default function App() {
             <Route path="/app/swipe" element={<RequireAuth><Swipe /></RequireAuth>} />
             <Route path="/app/swipe/:mode" element={<RequireAuth><Swipe /></RequireAuth>} />
             <Route path="/app/subscribe" element={<RequireAuth><Subscribe /></RequireAuth>} />
+
+            {/* USER - Legacy routes (backward compatibility) */}
+            <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+            <Route path="/profile-setup" element={<RequireAuth><ProfileSetup /></RequireAuth>} />
+            <Route path="/browse" element={<RequireAuth><Browse /></RequireAuth>} />
+            <Route path="/properties" element={<RequireAuth><Properties /></RequireAuth>} />
+            <Route path="/properties/:id" element={<RequireAuth><PropertyDetail /></RequireAuth>} />
+            <Route path="/groups" element={<RequireAuth><Groups /></RequireAuth>} />
+            <Route path="/groups/:id" element={<RequireAuth><GroupDetail /></RequireAuth>} />
+            <Route path="/messages" element={<RequireAuth><Messages /></RequireAuth>} />
+            <Route path="/verification" element={<RequireAuth><Verification /></RequireAuth>} />
+            <Route path="/subscription" element={<RequireAuth><Subscription /></RequireAuth>} />
+            <Route path="/income-verification" element={<RequireAuth><IncomeVerification /></RequireAuth>} />
+            <Route path="/swipe" element={<RequireAuth><Swipe /></RequireAuth>} />
+            <Route path="/swipe/:mode" element={<RequireAuth><Swipe /></RequireAuth>} />
+            <Route path="/subscribe" element={<RequireAuth><Subscribe /></RequireAuth>} />
 
             {/* LANDLORD */}
             <Route path="/landlord" element={<RequireAuth><RequireRole role="landlord"><LandlordDashboard /></RequireRole></RequireAuth>} />
